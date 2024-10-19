@@ -3,7 +3,7 @@ name = "mlops-with-databricks"
 version = "0.0.1"
 description = "MLOps with Databricks"
 readme = "README.md"
-requires-python = "==3.11"
+requires-python = "==3.11.10"
 dependencies = ["lightgbm>=4.5.0, <5",
                 "scikit-learn>=1.5.1, <2",
                 "cloudpickle>=3.0.0, <4",
