@@ -21,7 +21,7 @@ class Preprocessor():
         self.preprocessor = None
 
     def csv_loader_raw_data(self, filename):
-        return spark.read.option("header",True).csv(f'{self.all_paths.data_volume}/{filename}.csv').toPandas()
+        return pd.read_csv(f'{self.all_paths.data_volume}/{filename}.csv')
     
     def preprocess_raw_data(self):
 
