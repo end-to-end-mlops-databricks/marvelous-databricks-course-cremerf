@@ -24,6 +24,8 @@ dev = ["databricks-connect>=15.4.1, <16",
 
 [tool.ruff]
 line-length = 120
+
+[tool.ruff.lint]
 select = [
     "F",  # pyflakes rules
     "E",  # pycodestyle error rules
