@@ -3,7 +3,7 @@ name = "mlops-with-databricks"
 version = "0.0.1"
 description = "MLOps with Databricks"
 readme = "README.md"
-requires-python = "==3.11"
+requires-python = ">=3.11, <3.12"
 dependencies = ["lightgbm>=4.5.0, <5",
                 "scikit-learn>=1.5.1, <2",
                 "cloudpickle>=3.0.0, <4",
@@ -24,6 +24,8 @@ dev = ["databricks-connect>=15.4.1, <16",
 
 [tool.ruff]
 line-length = 120
+
+[tool.ruff.lint]
 select = [
     "F",  # pyflakes rules
     "E",  # pycodestyle error rules
