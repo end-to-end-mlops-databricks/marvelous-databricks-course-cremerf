@@ -10,14 +10,14 @@ logger = logging.getLogger(__name__)
 
 def run():
     # Load configuration
-    with open("/Users/fcremer29/focus/marvelmlops/project-config.yml", "r") as file:
+    with open("project-config.yml", "r") as file:
         config = yaml.safe_load(file)
 
     logger.info("Configuration loaded:")
     print(yaml.dump(config, default_flow_style=False))
 
     # initialize Preprocessor
-    data_processor = Preprocessor(filename="hotel_reservations.csv", config=config)
+    data_processor = Preprocessor(filename="hotel_reservations", config=config)
     logger.info("DataProcessor initialized.")
 
     # execute sci-kit learn pipeline to perform preprocessing tasks

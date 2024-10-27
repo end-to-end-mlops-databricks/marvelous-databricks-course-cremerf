@@ -1,22 +1,16 @@
 import pandas as pd
-from sklearn.compose import ColumnTransformer
-from sklearn.impute import SimpleImputer
+from config import ProjectConfig
+import datetime
 from sklearn.model_selection import train_test_split
-from sklearn.pipeline import Pipeline
-from sklearn.preprocessing import OneHotEncoder, StandardScaler
-
-from packages.paths import AllPaths
+from pyspark.sql.functions import current_timestamp, to_utc_timestamp
+from datetime import datetime
+from pyspark.sql import SparkSession
 
 
 class Preprocessor:
-    def __init__(self, filename, config) -> None:
+    def __init__(self, pandas_df: pd.DataFrame, config: ProjectConfig) -> None:
         self.config = config
-        self.all_paths = AllPaths(config=self.config)
-        self.df_input = self.csv_loader_raw_data()
-        self.filename = filename
-        self.X = None
-        self.y = None
-        self.preprocessor = None
+        self.df = pandas_df
 
     def csv_loader_raw_data(self, filename):
         return pd.read_csv(f"{self.all_paths.data_volume}/{filename}.csv")
