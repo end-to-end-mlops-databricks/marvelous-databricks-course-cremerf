@@ -1,5 +1,4 @@
 from pydantic import BaseModel
-from paths import AllPaths
 from typing import List, Dict, Any
 import yaml
 
