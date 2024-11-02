@@ -24,7 +24,7 @@ class Preprocessor:
         self.df['avg_price_per_room'] = self.df['avg_price_per_room'].replace(0, np.nan)
         self.df['avg_price_per_room'] = self.df['avg_price_per_room'].fillna(median_value)
 
-        self.df[self.target] = self.df[self.target].map({'Not_Canceled': 0, 'Canceled': 1})
+        self.df[self.config.target] = self.df[self.config.target].map({'Not_Canceled': 0, 'Canceled': 1})
 
         # Handle numeric features
         num_features = self.config.num_features
