@@ -21,8 +21,9 @@ class AllPaths:
         self.data_volume = f"{self.cremerf_catalog}" + "data/"
     
     def is_databricks(self):
-        # Check if the /databricks directory exists
-        return os.path.exists('/databricks')
+        is_db = 'DATABRICKS_RUNTIME_VERSION' in os.environ
+        print(f"Is Databricks Environment: {is_db}")
+        return is_db
     
     def get_config_file(self):
         # Load configuration
