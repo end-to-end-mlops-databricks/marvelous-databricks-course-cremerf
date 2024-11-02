@@ -1,0 +1,53 @@
+{
+    "info": {
+        "artifact_uri": "dbfs:/databricks/mlflow-tracking/3567572749194716/f7348886c4534deb9031f4881f4bb977/artifacts",
+        "end_time": 1730507475818,
+        "experiment_id": "3567572749194716",
+        "lifecycle_stage": "active",
+        "run_id": "f7348886c4534deb9031f4881f4bb977",
+        "run_name": "demo-run",
+        "run_uuid": "f7348886c4534deb9031f4881f4bb977",
+        "start_time": 1730507474761,
+        "status": "FINISHED",
+        "user_id": ""
+    },
+    "data": {
+        "metrics": {
+            "metric1": 1.0,
+            "metric2": 2.0
+        },
+        "params": {
+            "type": "demo"
+        },
+        "tags": {
+            "branch": "week2",
+            "git_sha": "050a3ddcb577c73d31f5f81739e8427980cb1d5e",
+            "mlflow.databricks.cluster.id": "1019-004523-z9n7g64f",
+            "mlflow.databricks.cluster.info": "{\"cluster_name\":\"cremerf's cluster\",\"spark_version\":\"15.4.x-scala2.12\",\"node_type_id\":\"i3.xlarge\",\"driver_node_type_id\":\"i3.xlarge\",\"autotermination_minutes\":120,\"disk_spec\":{},\"num_workers\":0}",
+            "mlflow.databricks.cluster.libraries": "{\"installable\":[{\"whl\":\"/Volumes/mlops_students/cremerfederico29/packages/marvelmlops-0.0.1-py3-none-any.whl\"}],\"redacted\":[]}",
+            "mlflow.databricks.gitRepoCommit": "050a3ddcb577c73d31f5f81739e8427980cb1d5e",
+            "mlflow.databricks.gitRepoProvider": "gitHub",
+            "mlflow.databricks.gitRepoReference": "week2",
+            "mlflow.databricks.gitRepoReferenceType": "branch",
+            "mlflow.databricks.gitRepoRelativePath": "notebooks/02.mlflow_experiment",
+            "mlflow.databricks.gitRepoStatus": "unknown",
+            "mlflow.databricks.gitRepoUrl": "https://github.com/end-to-end-mlops-databricks/marvelous-databricks-course-cremerf.git",
+            "mlflow.databricks.notebook.commandID": "1730500536416_7662987096633710878_e4537bae3c4f4ba1978254dab11c5a3e",
+            "mlflow.databricks.notebookID": "3567572749194584",
+            "mlflow.databricks.notebookPath": "/Users/cremerfederico29@gmail.com/marvelmlops-cremerf/notebooks/02.mlflow_experiment",
+            "mlflow.databricks.notebookRevisionID": "1730507476310",
+            "mlflow.databricks.webappURL": "https://oregon.cloud.databricks.com",
+            "mlflow.databricks.workspaceID": "1567750103580588",
+            "mlflow.databricks.workspaceURL": "https://dbc-643c4c2b-d6c9.cloud.databricks.com",
+            "mlflow.note.content": "demo run",
+            "mlflow.runColor": "#5387dd",
+            "mlflow.runName": "demo-run",
+            "mlflow.source.name": "/Users/cremerfederico29@gmail.com/marvelmlops-cremerf/notebooks/02.mlflow_experiment",
+            "mlflow.source.type": "NOTEBOOK",
+            "mlflow.user": "cremerfederico29@gmail.com"
+        }
+    },
+    "inputs": {
+        "dataset_inputs": []
+    }
+}
