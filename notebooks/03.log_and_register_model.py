@@ -38,8 +38,7 @@ class AllPaths:
             print(f"Error: {e}")
             return None
 
-# Initialize the class
-ALLPATHS = AllPaths()
+
 
 
 # COMMAND ----------
@@ -81,6 +80,11 @@ class AllPaths:
             raise
 
 
+
+# COMMAND ----------
+
+# Initialize the class
+ALLPATHS = AllPaths()
 
 # COMMAND ----------
 
