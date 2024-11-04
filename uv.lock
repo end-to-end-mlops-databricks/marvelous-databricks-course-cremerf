@@ -701,57 +701,6 @@ wheels = [
 ]
 
 [[package]]
-name = "housing-price"
-version = "0.0.1"
-source = { editable = "." }
-dependencies = [
-    { name = "cffi" },
-    { name = "cloudpickle" },
-    { name = "databricks-feature-engineering" },
-    { name = "databricks-feature-lookup" },
-    { name = "databricks-sdk" },
-    { name = "lightgbm" },
-    { name = "matplotlib" },
-    { name = "mlflow" },
-    { name = "numpy" },
-    { name = "pandas" },
-    { name = "psutil" },
-    { name = "pyarrow" },
-    { name = "pydantic" },
-    { name = "scikit-learn" },
-    { name = "scipy" },
-]
-
-[package.optional-dependencies]
-dev = [
-    { name = "databricks-connect" },
-    { name = "ipykernel" },
-    { name = "pip" },
-]
-
-[package.metadata]
-requires-dist = [
-    { name = "cffi", specifier = "==1.17.1" },
-    { name = "cloudpickle", specifier = "==3.1.0" },
-    { name = "databricks-connect", marker = "extra == 'dev'", specifier = ">=15.4.1,<16" },
-    { name = "databricks-feature-engineering", specifier = "==0.6" },
-    { name = "databricks-feature-lookup", specifier = "==1.2.0" },
-    { name = "databricks-sdk", specifier = "==0.32.0" },
-    { name = "ipykernel", marker = "extra == 'dev'", specifier = ">=6.29.5,<7" },
-    { name = "lightgbm", specifier = "===4.5.0" },
-    { name = "matplotlib", specifier = "==3.9.2" },
-    { name = "mlflow", specifier = "==2.17.0" },
-    { name = "numpy", specifier = "==1.26.4" },
-    { name = "pandas", specifier = "==2.2.3" },
-    { name = "pip", marker = "extra == 'dev'", specifier = ">=24.2" },
-    { name = "psutil", specifier = "==6.0.0" },
-    { name = "pyarrow", specifier = "==14.0.1" },
-    { name = "pydantic", specifier = "==2.9.2" },
-    { name = "scikit-learn", specifier = "==1.5.2" },
-    { name = "scipy", specifier = "==1.14.1" },
-]
-
-[[package]]
 name = "idna"
 version = "3.10"
 source = { registry = "https://pypi.org/simple" }
@@ -985,6 +934,57 @@ wheels = [
     { url = "https://files.pythonhosted.org/packages/69/84/83439e16197337b8b14b6a5b9c2105fff81d42c2a7c5b58ac7b62ee2c3b1/MarkupSafe-3.0.2-cp311-cp311-musllinux_1_2_x86_64.whl", hash = "sha256:0bff5e0ae4ef2e1ae4fdf2dfd5b76c75e5c2fa4132d05fc1b0dabcd20c7e28c4", size = 23306 },
     { url = "https://files.pythonhosted.org/packages/9a/34/a15aa69f01e2181ed8d2b685c0d2f6655d5cca2c4db0ddea775e631918cd/MarkupSafe-3.0.2-cp311-cp311-win32.whl", hash = "sha256:6c89876f41da747c8d3677a2b540fb32ef5715f97b66eeb0c6b66f5e3ef6f59d", size = 15094 },
     { url = "https://files.pythonhosted.org/packages/da/b8/3a3bd761922d416f3dc5d00bfbed11f66b1ab89a0c2b6e887240a30b0f6b/MarkupSafe-3.0.2-cp311-cp311-win_amd64.whl", hash = "sha256:70a87b411535ccad5ef2f1df5136506a10775d267e197e4cf531ced10537bd6b", size = 15521 },
+]
+
+[[package]]
+name = "marvelmlops"
+version = "0.0.1"
+source = { editable = "." }
+dependencies = [
+    { name = "cffi" },
+    { name = "cloudpickle" },
+    { name = "databricks-feature-engineering" },
+    { name = "databricks-feature-lookup" },
+    { name = "databricks-sdk" },
+    { name = "lightgbm" },
+    { name = "matplotlib" },
+    { name = "mlflow" },
+    { name = "numpy" },
+    { name = "pandas" },
+    { name = "psutil" },
+    { name = "pyarrow" },
+    { name = "pydantic" },
+    { name = "scikit-learn" },
+    { name = "scipy" },
+]
+
+[package.optional-dependencies]
+dev = [
+    { name = "databricks-connect" },
+    { name = "ipykernel" },
+    { name = "pip" },
+]
+
+[package.metadata]
+requires-dist = [
+    { name = "cffi", specifier = "==1.17.1" },
+    { name = "cloudpickle", specifier = "==3.1.0" },
+    { name = "databricks-connect", marker = "extra == 'dev'", specifier = ">=15.4.1,<16" },
+    { name = "databricks-feature-engineering", specifier = "==0.6" },
+    { name = "databricks-feature-lookup", specifier = "==1.2.0" },
+    { name = "databricks-sdk", specifier = "==0.32.0" },
+    { name = "ipykernel", marker = "extra == 'dev'", specifier = ">=6.29.5,<7" },
+    { name = "lightgbm", specifier = "===4.5.0" },
+    { name = "matplotlib", specifier = "==3.9.2" },
+    { name = "mlflow", specifier = "==2.17.0" },
+    { name = "numpy", specifier = "==1.26.4" },
+    { name = "pandas", specifier = "==2.2.3" },
+    { name = "pip", marker = "extra == 'dev'", specifier = ">=24.2" },
+    { name = "psutil", specifier = "==6.0.0" },
+    { name = "pyarrow", specifier = "==14.0.1" },
+    { name = "pydantic", specifier = "==2.9.2" },
+    { name = "scikit-learn", specifier = "==1.5.2" },
+    { name = "scipy", specifier = "==1.14.1" },
 ]
 
 [[package]]
