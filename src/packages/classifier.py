@@ -19,36 +19,31 @@ config = ProjectConfig.from_yaml(config_path=ALLPATHS.filename_config)
 
 spark = SparkSession.builder.getOrCreate()
 
-class CancellationModel():
-        def __init__(self, config, preprocessor, classifier) -> None:
+class CancellationModel:
+    def __init__(self, config, preprocessor, classifier) -> None:
+        try:
             self.config = config
             self.config_dict = config.dict()
+            print("Config dictionary loaded successfully.")
+            print("Config dict:", self.config_dict)
+            
+            # Extract classifier parameters
+            classifier_params = self.config_dict.get('parameters', {})
+            print("Classifier parameters:", classifier_params)
+            
+            # Instantiate the classifier
+            classifier_instance = classifier(**classifier_params)
+            print("Classifier instance created.")
+            
+            # Create the pipeline
             self.pipeline = Pipeline(steps=[
-            ('preprocessor', preprocessor),
-            ('classifier', classifier(**self.config_dict['parameters']))
-        ])
-        
-        def train(self, X_train, y_train):
-            """
-            Train the model using the training data.
-
-            Parameters:
-            X_train (pandas.DataFrame): The training features.
-            y_train (pandas.Series): The target variable for training.
-            """
-            self.pipeline.fit(X_train, y_train)  # Fit the model
-
-        def predict(self, X):
-            """
-            Make predictions using the trained model.
-
-            Parameters:
-            X (pandas.DataFrame): The input features for prediction.
-
-            Returns:
-            numpy.ndarray: Predicted labels for the input features.
-            """
-            return self.pipeline.predict(X)  # Return predictions
+                ('preprocessor', preprocessor),
+                ('classifier', classifier_instance)
+            ])
+            print("Pipeline created successfully.")
+        except Exception as e:
+            print(f"An error occurred during initialization: {e}")
+            raise
 
         def evaluate(self, X_test, y_test):
             """

@@ -11,6 +11,7 @@ from pyspark.sql import SparkSession
 from mlflow.models import infer_signature
 from packages.config import ProjectConfig
 from packages.paths import AllPaths
+from packages.classifier import CancellationModel
 import json
 from mlflow import MlflowClient
 from mlflow.utils.environment import _mlflow_conda_env

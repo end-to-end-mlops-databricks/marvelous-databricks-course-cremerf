@@ -1,8 +1,8 @@
 # Databricks notebook source
 # Databricks notebook source
-!pip install python-dotenv
 from packages.config import ProjectConfig
 from packages.paths import AllPaths
+from packages.classifier import CancellationModel
 from pyspark.sql import SparkSession
 from sklearn.preprocessing import OneHotEncoder
 from sklearn.compose import ColumnTransformer
@@ -62,12 +62,16 @@ preprocessor = ColumnTransformer(
 )
 
 # Create the pipeline with preprocessing and the LightGBM regressor
-pipeline = Pipeline(steps=[("preprocessor", preprocessor), ("classifier", LGBMClassifier(**parameters))])
+#pipeline = Pipeline(steps=[("preprocessor", preprocessor), ("classifier", LGBMClassifier(**parameters))])
+
+# COMMAND ----------
+
+model_pipeline = CancellationModel(config=config, preprocessor=preprocessor, classifier=LGBMClassifier)
 
 # COMMAND ----------
 
 mlflow.set_experiment(experiment_name="/Shared/hotel-reservations-cremerf")
-git_sha = "8481624615bee3576be5ad67d68227446f0b238e"
+git_sha = "2cd1d102d0455a53f32761e57acbcd8db6e3f41f"
 
 # Start an MLflow run to track the training process
 with mlflow.start_run(
@@ -75,8 +79,8 @@ with mlflow.start_run(
 ) as run:
     run_id = run.info.run_id
 
-    pipeline.fit(X_train, y_train)
-    y_pred = pipeline.predict(X_test)
+    model_pipeline.pipeline.fit(X_train, y_train)
+    y_pred = model_pipeline.pipeline.predict(X_test)
 
     # Evaluate the model performance using classification metrics
     accuracy = accuracy_score(y_test, y_pred)
@@ -101,7 +105,7 @@ with mlflow.start_run(
     dataset = mlflow.data.from_spark(train_set_spark, table_name=f"{catalog_name}.{schema_name}.train_set", version="0")
     mlflow.log_input(dataset, context="training")
 
-    mlflow.sklearn.log_model(sk_model=pipeline, artifact_path="lightgbm-pipeline-model", signature=signature)
+    mlflow.sklearn.log_model(sk_model=model_pipeline, artifact_path="lightgbm-pipeline-model", signature=signature)
 
 
 # COMMAND ----------
