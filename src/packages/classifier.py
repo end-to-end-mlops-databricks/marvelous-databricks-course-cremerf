@@ -54,7 +54,7 @@ class CancellationModel:
         Returns:
         numpy.ndarray: Predicted labels for the input features.
         """
-        return self.model.predict(X)  # Return predictions
+        return self.pipeline.predict(X)  # Return predictions
 
     def evaluate(self, X_test, y_test):
         """
