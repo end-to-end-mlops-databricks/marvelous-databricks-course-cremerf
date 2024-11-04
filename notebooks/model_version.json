@@ -1,0 +1,18 @@
+{
+    "_name": "mlops_students.cremerfederico29.hotel_reservation_cremerf_pyfunc",
+    "_version": "1",
+    "_creation_time": 1730749082658,
+    "_last_updated_timestamp": 1730749084078,
+    "_description": "",
+    "_user_id": "cremerfederico29@gmail.com",
+    "_current_stage": null,
+    "_source": "dbfs:/databricks/mlflow-tracking/588621761538650/a6241d21430b4523b54f79f2e3eed3c4/artifacts/pyfunc-hotel-reservations-cremerf-model",
+    "_run_id": "a6241d21430b4523b54f79f2e3eed3c4",
+    "_run_link": null,
+    "_status": "READY",
+    "_status_message": "",
+    "_tags": {
+        "git_sha": "b3fd67dfc8595127c3f8787b59116a064195df53"
+    },
+    "_aliases": []
+}
