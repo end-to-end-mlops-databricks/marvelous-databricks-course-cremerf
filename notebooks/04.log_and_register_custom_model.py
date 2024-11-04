@@ -13,6 +13,7 @@ from packages.config import ProjectConfig
 from packages.paths import AllPaths
 from packages.classifier import CancellationModel
 from mlflow_train import CancellatioModelWrapper
+from sklearn.metrics import accuracy_score, classification_report
 import json
 from mlflow import MlflowClient
 from mlflow.utils.environment import _mlflow_conda_env
@@ -68,27 +69,68 @@ y_test = test_set[[target]].toPandas()
 
 # COMMAND ----------
 
-run_id
+from lightgbm import LGBMClassifier
+from sklearn.preprocessing import OneHotEncoder
+from sklearn.compose import ColumnTransformer
+
+preprocessor = ColumnTransformer(
+    transformers=[("cat", OneHotEncoder(handle_unknown="ignore"), cat_features)], remainder="passthrough"
+)
+
+model = CancellationModel(config=config, preprocessor=preprocessor, classifier=LGBMClassifier)
 
 # COMMAND ----------
 
 wrapped_model = CancellatioModelWrapper(model.pipeline)  # we pass the loaded model to the wrapper
 example_input = X_test.iloc[0:1]  # Select the first row for prediction as example
-example_prediction = wrapped_model.predict(model_input=example_input)
-print("Example Prediction:", example_prediction)
+#example_prediction = wrapped_model.predict(model_input=example_input)
+#print("Example Prediction:", example_prediction)
 
 # COMMAND ----------
 
-wrapped_model
+wrapped_model.model
 
 # COMMAND ----------
 
-mlflow.set_experiment(experiment_name="/Shared/hotel-reservations-cremerf-pyfunc")
-git_sha = "b3fd67dfc8595127c3f8787b59116a064195df53"
+mlflow.set_experiment(experiment_name="/Shared/hotel-reservations-cremerf-pyfunc-v1")
+git_sha = "3970ea021fe9e7d19cd1fbff0c3205a28cf5ee18"
 
-with mlflow.start_run(tags={"branch": "week2", "git_sha": f"{git_sha}"}) as run:
+with mlflow.start_run(
+    tags={
+        "branch": "week2",
+        "git_sha": f"{git_sha}",
+        "model_version": "v1.2",
+        "environment": "development",
+        "dataset_version": "v1.0",
+        "author": "cremerfederico29"
+    },
+    description="Training run for hotel reservation prediction model with pyfunc implementation"
+) as run:
     run_id = run.info.run_id
-    signature = infer_signature(model_input=X_train, model_output={"Prediction": example_prediction})
+
+    wrapped_model.model.fit(X_train, y_train)
+    y_pred = wrapped_model.model.predict(X_test)
+
+    # Evaluate the model performance using classification metrics
+    accuracy = accuracy_score(y_test, y_pred)
+    report = classification_report(y_test, y_pred, output_dict=True)
+
+    print(f"Accuracy: {accuracy}")
+    print(f"Classification Report:\n{report}")
+
+    # Log parameters, metrics, and the model to MLflow
+    mlflow.log_param("model_type", "custom_wrapped_modelv1.2(LightGBM)")
+    mlflow.log_params(parameters)
+    mlflow.log_metric("accuracy", accuracy)
+
+    # Log classification report metrics
+    for class_label, metrics in report.items():
+        if isinstance(metrics, dict):
+            mlflow.log_metric(f"precision_{class_label}", metrics["precision"])
+            mlflow.log_metric(f"recall_{class_label}", metrics["recall"])
+            mlflow.log_metric(f"f1-score_{class_label}", metrics["f1-score"])
+
+    signature = infer_signature(model_input=X_train, model_output={"Prediction": y_pred})
     dataset = mlflow.data.from_spark(train_set, table_name=f"{catalog_name}.{schema_name}.train_set", version="0")
     mlflow.log_input(dataset, context="training")
     conda_env = _mlflow_conda_env(
@@ -105,6 +147,10 @@ with mlflow.start_run(tags={"branch": "week2", "git_sha": f"{git_sha}"}) as run:
         signature=signature,
     )
 
+
+# COMMAND ----------
+
+run_id
 
 # COMMAND ----------
 
@@ -131,8 +177,8 @@ model_name
 
 # COMMAND ----------
 
-model_version_alias = "the_best_model"
-client.set_registered_model_alias(model_name, model_version_alias, "1")
+model_version_alias = "the_best_model_v2"
+client.set_registered_model_alias(model_name, model_version_alias, "2")
 
 model_uri = f"models:/{model_name}@{model_version_alias}"
 model = mlflow.pyfunc.load_model(model_uri)
