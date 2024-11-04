@@ -46,7 +46,7 @@ config = ProjectConfig.from_yaml(config_path=ALLPATHS.filename_config)
 num_features = config.num_features
 cat_features = config.cat_features
 target = config.target
-target = config.id_field
+id_field = config.id_field
 parameters = config.parameters
 catalog_name = config.catalog_name
 schema_name = config.schema_name
