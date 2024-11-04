@@ -23,9 +23,9 @@ class CancellationModel():
         def __init__(self, config, preprocessor, classifier) -> None:
             self.config = config
             self.config_dict = config.dict()
-            self.model = Pipeline(steps=[
+            self.pipeline = Pipeline(steps=[
             ('preprocessor', preprocessor),
-            ('classifier', classifier)
+            ('classifier', classifier(**self.config_dict['parameters']))
         ])
         
         def train(self, X_train, y_train):
@@ -36,7 +36,7 @@ class CancellationModel():
             X_train (pandas.DataFrame): The training features.
             y_train (pandas.Series): The target variable for training.
             """
-            self.model.fit(X_train, y_train)  # Fit the model
+            self.pipeline.fit(X_train, y_train)  # Fit the model
 
         def predict(self, X):
             """
@@ -48,7 +48,7 @@ class CancellationModel():
             Returns:
             numpy.ndarray: Predicted labels for the input features.
             """
-            return self.model.predict(X)  # Return predictions
+            return self.pipeline.predict(X)  # Return predictions
 
         def evaluate(self, X_test, y_test):
             """
@@ -80,8 +80,8 @@ class CancellationModel():
                 feature_importance: Array of feature importances.
                 feature_names: Names of the features used in the model.
             """
-            feature_importance = self.model.named_steps["classifier"].feature_importances_  # Get feature importances
-            feature_names = self.model.named_steps["preprocessor"].get_feature_names_out()  # Get feature names
+            feature_importance = self.pipeline.named_steps["classifier"].feature_importances_  # Get feature importances
+            feature_names = self.pipeline.named_steps["preprocessor"].get_feature_names_out()  # Get feature names
             return feature_importance, feature_names  # Return importances and names
 
         def get_confusion_matrix(self, y_test, y_pred):
@@ -98,5 +98,5 @@ class CancellationModel():
                 cm: Confusion matrix as a 2D array.
             """
             cm = confusion_matrix(y_test, y_pred)  # Compute confusion matrix
-            disp = ConfusionMatrixDisplay(confusion_matrix=cm, display_labels=self.model.classes_)  # Prepare display
+            disp = ConfusionMatrixDisplay(confusion_matrix=cm, display_labels=self.pipeline.classes_)  # Prepare display
             return disp, cm  # Return display and confusion matrix
