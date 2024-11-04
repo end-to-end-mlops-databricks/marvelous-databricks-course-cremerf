@@ -49,8 +49,9 @@ class Preprocessor:
             self.df[col] = self.df[col].fillna('Unknown')
 
         # Extract target and relevant features
+        id_field = self.config.id_field
         target = self.config.target
-        relevant_columns = cat_features + num_features + [target]
+        relevant_columns = cat_features + num_features + [target] + [id_field]
         self.df = self.df[relevant_columns]
 
 

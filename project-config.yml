@@ -1,6 +1,8 @@
 catalog_name: mlops_students
 schema_name: cremerfederico29
 
+id_field: Booking_ID
+
 parameters:
   boosting_type: 'gbdt'
   num_leaves: 31
@@ -35,3 +37,4 @@ cat_features:
   - repeated_guest
 
 target: booking_status
+

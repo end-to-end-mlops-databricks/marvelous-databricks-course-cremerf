@@ -2,7 +2,6 @@ from pydantic import BaseModel
 from typing import List, Dict, Any
 import yaml
 
-
 class ProjectConfig(BaseModel):
     num_features: List[str]
     cat_features: List[str]
