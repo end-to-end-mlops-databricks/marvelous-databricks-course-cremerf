@@ -1,5 +1,9 @@
 # Databricks notebook source
-# MAGIC %pip install python-dotenv
+# MAGIC %restart_python
+
+# COMMAND ----------
+
+from lightgbm import LGBMClassifier
 
 # COMMAND ----------
 
@@ -12,6 +16,7 @@ from mlflow.models import infer_signature
 from packages.config import ProjectConfig
 from packages.paths import AllPaths
 from packages.classifier import CancellationModel
+from mlflow_train import CancellatioModelWrapper
 import json
 from mlflow import MlflowClient
 from mlflow.utils.environment import _mlflow_conda_env
@@ -56,10 +61,6 @@ model = mlflow.sklearn.load_model(f"runs:/{run_id}/lightgbm-pipeline-model")
 
 # COMMAND ----------
 
-
-
-# COMMAND ----------
-
 train_set = spark.table(f"{catalog_name}.{schema_name}.train_set")
 test_set = spark.table(f"{catalog_name}.{schema_name}.test_set")
 
@@ -71,7 +72,11 @@ y_test = test_set[[target]].toPandas()
 
 # COMMAND ----------
 
-wrapped_model = HotelReservationseModelWrapper(model)  # we pass the loaded model to the wrapper
+wrapped_model = CancellatioModelWrapper(model.pipeline)  # we pass the loaded model to the wrapper
+
+
+# COMMAND ----------
+
 example_input = X_test.iloc[0:1]  # Select the first row for prediction as example
-example_prediction = wrapped_model.predict(context=None, model_input=example_input)
+example_prediction = wrapped_model.predict(model_input=example_input)
 print("Example Prediction:", example_prediction)

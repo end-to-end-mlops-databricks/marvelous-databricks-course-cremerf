@@ -1,4 +1,8 @@
 # Databricks notebook source
+# MAGIC %restart_python
+
+# COMMAND ----------
+
 # Databricks notebook source
 from packages.config import ProjectConfig
 from packages.paths import AllPaths
@@ -71,7 +75,7 @@ model_pipeline = CancellationModel(config=config, preprocessor=preprocessor, cla
 # COMMAND ----------
 
 mlflow.set_experiment(experiment_name="/Shared/hotel-reservations-cremerf")
-git_sha = "2cd1d102d0455a53f32761e57acbcd8db6e3f41f"
+git_sha = "7028defafa59b034a31bd4ad2ca69ca510fbf2d6"
 
 # Start an MLflow run to track the training process
 with mlflow.start_run(
