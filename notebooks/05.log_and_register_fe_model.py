@@ -1,6 +1,3 @@
-# Databricks notebook source
-dbutils.library.restartPython()
-
 # COMMAND ----------
 
 import mlflow
@@ -61,11 +58,6 @@ loyalty_function_name = f"{catalog_name}.{schema_name}.calculate_loyalty_score"
 # Load training and test sets
 train_set = spark.table(f"{catalog_name}.{schema_name}.train_set")
 test_set = spark.table(f"{catalog_name}.{schema_name}.test_set")
-
-
-# COMMAND ----------
-
-spark.table(f"{catalog_name}.{schema_name}.train_set").toPandas().dtypes
 
 # COMMAND ----------
 

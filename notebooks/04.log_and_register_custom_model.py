@@ -1,17 +1,16 @@
-# Databricks notebook source
-# MAGIC %restart_python
-
 # COMMAND ----------
 
-# Databricks notebook source
 import json
 
 import mlflow
+from lightgbm import LGBMClassifier
 from mlflow import MlflowClient
 from mlflow.models import infer_signature
 from mlflow.utils.environment import _mlflow_conda_env
 from pyspark.sql import SparkSession
+from sklearn.compose import ColumnTransformer
 from sklearn.metrics import accuracy_score, classification_report
+from sklearn.preprocessing import OneHotEncoder
 
 from mlflow_train import CancellatioModelWrapper
 from packages.classifier import CancellationModel
@@ -69,10 +68,6 @@ y_test = test_set[[target]].toPandas()
 
 # COMMAND ----------
 
-from lightgbm import LGBMClassifier
-from sklearn.compose import ColumnTransformer
-from sklearn.preprocessing import OneHotEncoder
-
 preprocessor = ColumnTransformer(
     transformers=[("cat", OneHotEncoder(handle_unknown="ignore"), cat_features)], remainder="passthrough"
 )
@@ -85,10 +80,6 @@ wrapped_model = CancellatioModelWrapper(model.pipeline)  # we pass the loaded mo
 example_input = X_test.iloc[0:1]  # Select the first row for prediction as example
 # example_prediction = wrapped_model.predict(model_input=example_input)
 # print("Example Prediction:", example_prediction)
-
-# COMMAND ----------
-
-wrapped_model.model
 
 # COMMAND ----------
 
@@ -147,11 +138,6 @@ with mlflow.start_run(
         signature=signature,
     )
 
-
-# COMMAND ----------
-
-run_id
-
 # COMMAND ----------
 
 loaded_model = mlflow.pyfunc.load_model(f"runs:/{run_id}/pyfunc-hotel-reservations-cremerf-model")
@@ -172,10 +158,6 @@ with open("model_version.json", "w") as json_file:
 
 # COMMAND ----------
 
-model_name
-
-# COMMAND ----------
-
 model_version_alias = "the_best_model_v2"
 client.set_registered_model_alias(model_name, model_version_alias, "2")
 
@@ -186,7 +168,3 @@ model = mlflow.pyfunc.load_model(model_uri)
 # COMMAND ----------
 
 client.get_model_version_by_alias(model_name, model_version_alias)
-
-# COMMAND ----------
-
-model
