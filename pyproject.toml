@@ -28,7 +28,7 @@ dev = ["databricks-connect>=15.4.1, <16",
 [build-system]
 requires = [
     "setuptools>=72.0"]
-build-backend = "setuptools.build_meta" 
+build-backend = "setuptools.build_meta"
 
 [tool.ruff]
 line-length = 120

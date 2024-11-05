@@ -37,4 +37,3 @@ cat_features:
   - repeated_guest
 
 target: booking_status
-

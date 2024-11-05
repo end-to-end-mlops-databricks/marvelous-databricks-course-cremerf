@@ -4,19 +4,19 @@
 # COMMAND ----------
 
 # Databricks notebook source
+import json
+
 import mlflow
-import numpy as np
-import pandas as pd
-from pyspark.sql import SparkSession
+from mlflow import MlflowClient
 from mlflow.models import infer_signature
+from mlflow.utils.environment import _mlflow_conda_env
+from pyspark.sql import SparkSession
+from sklearn.metrics import accuracy_score, classification_report
+
+from mlflow_train import CancellatioModelWrapper
+from packages.classifier import CancellationModel
 from packages.config import ProjectConfig
 from packages.paths import AllPaths
-from packages.classifier import CancellationModel
-from mlflow_train import CancellatioModelWrapper
-from sklearn.metrics import accuracy_score, classification_report
-import json
-from mlflow import MlflowClient
-from mlflow.utils.environment import _mlflow_conda_env
 
 # COMMAND ----------
 
@@ -70,8 +70,8 @@ y_test = test_set[[target]].toPandas()
 # COMMAND ----------
 
 from lightgbm import LGBMClassifier
-from sklearn.preprocessing import OneHotEncoder
 from sklearn.compose import ColumnTransformer
+from sklearn.preprocessing import OneHotEncoder
 
 preprocessor = ColumnTransformer(
     transformers=[("cat", OneHotEncoder(handle_unknown="ignore"), cat_features)], remainder="passthrough"
@@ -83,8 +83,8 @@ model = CancellationModel(config=config, preprocessor=preprocessor, classifier=L
 
 wrapped_model = CancellatioModelWrapper(model.pipeline)  # we pass the loaded model to the wrapper
 example_input = X_test.iloc[0:1]  # Select the first row for prediction as example
-#example_prediction = wrapped_model.predict(model_input=example_input)
-#print("Example Prediction:", example_prediction)
+# example_prediction = wrapped_model.predict(model_input=example_input)
+# print("Example Prediction:", example_prediction)
 
 # COMMAND ----------
 
@@ -102,9 +102,9 @@ with mlflow.start_run(
         "model_version": "v1.2",
         "environment": "development",
         "dataset_version": "v1.0",
-        "author": "cremerfederico29"
+        "author": "cremerfederico29",
     },
-    description="Training run for hotel reservation prediction model with pyfunc implementation"
+    description="Training run for hotel reservation prediction model with pyfunc implementation",
 ) as run:
     run_id = run.info.run_id
 
@@ -143,7 +143,7 @@ with mlflow.start_run(
     mlflow.pyfunc.log_model(
         python_model=wrapped_model,
         artifact_path="pyfunc-hotel-reservations-cremerf-model",
-        #code_paths=["../Volumes/mlops_students/cremerfederico29/packages/"],
+        # code_paths=["../Volumes/mlops_students/cremerfederico29/packages/"],
         signature=signature,
     )
 
@@ -154,7 +154,7 @@ run_id
 
 # COMMAND ----------
 
-loaded_model = mlflow.pyfunc.load_model(f'runs:/{run_id}/pyfunc-hotel-reservations-cremerf-model')
+loaded_model = mlflow.pyfunc.load_model(f"runs:/{run_id}/pyfunc-hotel-reservations-cremerf-model")
 loaded_model.unwrap_python_model()
 
 # COMMAND ----------
@@ -162,9 +162,8 @@ loaded_model.unwrap_python_model()
 model_name = f"{catalog_name}.{schema_name}.hotel_reservation_cremerf_pyfunc"
 
 model_version = mlflow.register_model(
-    model_uri=f'runs:/{run_id}/pyfunc-hotel-reservations-cremerf-model',
-    name=model_name,
-    tags={"git_sha": f"{git_sha}"})
+    model_uri=f"runs:/{run_id}/pyfunc-hotel-reservations-cremerf-model", name=model_name, tags={"git_sha": f"{git_sha}"}
+)
 
 # COMMAND ----------
 

@@ -4,19 +4,18 @@
 # COMMAND ----------
 
 # Databricks notebook source
+
+import mlflow
+from lightgbm import LGBMClassifier
+from mlflow.models import infer_signature
+from pyspark.sql import SparkSession
+from sklearn.compose import ColumnTransformer
+from sklearn.metrics import accuracy_score, classification_report
+from sklearn.preprocessing import OneHotEncoder
+
+from packages.classifier import CancellationModel
 from packages.config import ProjectConfig
 from packages.paths import AllPaths
-from packages.classifier import CancellationModel
-from pyspark.sql import SparkSession
-from sklearn.preprocessing import OneHotEncoder
-from sklearn.compose import ColumnTransformer
-from sklearn.pipeline import Pipeline
-from lightgbm import LGBMClassifier
-from sklearn.metrics import accuracy_score, classification_report
-import mlflow
-from mlflow.models import infer_signature
-import os
-from pathlib import Path
 
 # COMMAND ----------
 
@@ -66,7 +65,7 @@ preprocessor = ColumnTransformer(
 )
 
 # Create the pipeline with preprocessing and the LightGBM regressor
-#pipeline = Pipeline(steps=[("preprocessor", preprocessor), ("classifier", LGBMClassifier(**parameters))])
+# pipeline = Pipeline(steps=[("preprocessor", preprocessor), ("classifier", LGBMClassifier(**parameters))])
 
 # COMMAND ----------
 
@@ -117,7 +116,8 @@ with mlflow.start_run(
 model_version = mlflow.register_model(
     model_uri=f"runs:/{run_id}/lightgbm-pipeline-model",
     name=f"{catalog_name}.{schema_name}.hotel_reservations_model_basic",
-    tags={"git_sha": f"{git_sha}"},)
+    tags={"git_sha": f"{git_sha}"},
+)
 
 # COMMAND ----------
 

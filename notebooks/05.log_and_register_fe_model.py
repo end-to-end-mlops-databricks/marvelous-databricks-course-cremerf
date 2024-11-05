@@ -3,24 +3,20 @@ dbutils.library.restartPython()
 
 # COMMAND ----------
 
-import yaml
-from databricks import feature_engineering
-from pyspark.sql import SparkSession
-from databricks.sdk import WorkspaceClient
-from packages.config import ProjectConfig
-from packages.paths import AllPaths
-from packages.classifier import CancellationModel
-from mlflow_train import CancellatioModelWrapper
 import mlflow
-from pyspark.sql import functions as F
+from databricks import feature_engineering
+from databricks.feature_engineering import FeatureFunction, FeatureLookup
+from databricks.sdk import WorkspaceClient
 from lightgbm import LGBMClassifier
 from mlflow.models import infer_signature
+from pyspark.sql import SparkSession
 from sklearn.compose import ColumnTransformer
 from sklearn.metrics import accuracy_score, classification_report
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import OneHotEncoder
-from datetime import datetime
-from databricks.feature_engineering import FeatureFunction, FeatureLookup
+
+from packages.config import ProjectConfig
+from packages.paths import AllPaths
 
 # COMMAND ----------
 
@@ -57,8 +53,8 @@ schema_name = config.schema_name
 feature_table_name = f"{catalog_name}.{schema_name}.hotel_features"
 
 loyalty_function_name = f"{catalog_name}.{schema_name}.calculate_loyalty_score"
-#days_until_arrival_function_name = f"{catalog_name}.{schema_name}.calculate_days_until_arrival"
-#holiday_season_function_name = f"{catalog_name}.{schema_name}.is_holiday_season"
+# days_until_arrival_function_name = f"{catalog_name}.{schema_name}.calculate_days_until_arrival"
+# holiday_season_function_name = f"{catalog_name}.{schema_name}.is_holiday_season"
 
 # COMMAND ----------
 
@@ -89,7 +85,6 @@ spark.sql(f"""ALTER TABLE {feature_table_name}
 
 spark.sql(f"""ALTER TABLE {feature_table_name}
           SET TBLPROPERTIES (delta.enableChangeDataFeed = true);""")
-
 
 
 # COMMAND ----------

@@ -1,23 +1,16 @@
-import mlflow
-import numpy as np
-import pandas as pd
 from pyspark.sql import SparkSession
+from sklearn.metrics import ConfusionMatrixDisplay, accuracy_score, classification_report, confusion_matrix
 from sklearn.pipeline import Pipeline
-import lightgbm as lgb
-from mlflow.models import infer_signature
+
 from packages.config import ProjectConfig
 from packages.paths import AllPaths
-import json
-from sklearn.metrics import ConfusionMatrixDisplay, accuracy_score, classification_report, confusion_matrix
-from mlflow import MlflowClient
-from mlflow.utils.environment import _mlflow_conda_env
-
 
 ALLPATHS = AllPaths()
 
 config = ProjectConfig.from_yaml(config_path=ALLPATHS.filename_config)
 
 spark = SparkSession.builder.getOrCreate()
+
 
 class CancellationModel:
     def __init__(self, config, preprocessor, classifier) -> None:
@@ -26,24 +19,22 @@ class CancellationModel:
             self.config_dict = config.dict()
             print("Config dictionary loaded successfully.")
             print("Config dict:", self.config_dict)
-            
+
             # Extract classifier parameters
-            classifier_params = self.config_dict.get('parameters', {})
+            classifier_params = self.config_dict.get("parameters", {})
             print("Classifier parameters:", classifier_params)
-            
+
             # Instantiate the classifier
             classifier_instance = classifier(**classifier_params)
             print("Classifier instance created.")
-            
+
             # Create the pipeline
-            self.pipeline = Pipeline(steps=[
-                ('preprocessor', preprocessor),
-                ('classifier', classifier_instance)
-            ])
+            self.pipeline = Pipeline(steps=[("preprocessor", preprocessor), ("classifier", classifier_instance)])
             print("Pipeline created successfully.")
         except Exception as e:
             print(f"An error occurred during initialization: {e}")
             raise
+
     def predict(self, X):
         """
         Make predictions using the trained model.
