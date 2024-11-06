@@ -1,0 +1,15 @@
+{
+    "_experiment_id": "3567572749194716",
+    "_name": "/Shared/hotel-reservations-cremerf",
+    "_artifact_location": "dbfs:/databricks/mlflow-tracking/3567572749194716",
+    "_lifecycle_stage": "active",
+    "_tags": {
+        "mlflow.experiment.sourceName": "/Shared/hotel-reservations-cremerf",
+        "mlflow.ownerId": "2089246283924827",
+        "mlflow.ownerEmail": "cremerfederico29@gmail.com",
+        "mlflow.experimentType": "MLFLOW_EXPERIMENT",
+        "repository_name": "hotel-reservations-cremerf"
+    },
+    "_creation_time": 1730507269797,
+    "_last_update_time": 1730507269797
+}
