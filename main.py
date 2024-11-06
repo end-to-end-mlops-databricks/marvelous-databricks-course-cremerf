@@ -2,9 +2,9 @@ import logging
 
 import yaml
 
-from packages.paths import AllPaths
 from prepare_dataset import run_preprocessing
 from src.packages.config import ProjectConfig
+from src.packages.paths import AllPaths
 
 ALLPATHS = AllPaths()
 
