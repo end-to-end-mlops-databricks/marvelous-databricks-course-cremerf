@@ -2,32 +2,25 @@ import logging
 
 import yaml
 
-from src.packages.preprocessing import Preprocessor
+from packages.paths import AllPaths
+from prepare_dataset import run_preprocessing
+from src.packages.config import ProjectConfig
+
+ALLPATHS = AllPaths()
+
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
 logger = logging.getLogger(__name__)
 
 
 def run():
-    # Load configuration
-    with open("/Users/fcremer29/focus/marvelmlops/project-config.yml", "r") as file:
-        config = yaml.safe_load(file)
-
+    config = ProjectConfig.from_yaml(config_path=ALLPATHS.filename_config)
     logger.info("Configuration loaded:")
     print(yaml.dump(config, default_flow_style=False))
 
-    # initialize Preprocessor
-    data_processor = Preprocessor(filename="hotel_reservations.csv", config=config)
-    logger.info("DataProcessor initialized.")
-
-    # execute sci-kit learn pipeline to perform preprocessing tasks
-    data_processor.preprocess_raw_data()
-    logger.info("Data preprocessed.")
-
-    # Split the data
-    X_train, X_test, y_train, y_test = data_processor.split_data()
-    logger.info("Data split into training and test sets.")
-    logger.debug(f"Training set shape: {X_train.shape}, Test set shape: {X_test.shape}")
+    # run_preprocessing(): context transforms / splits / save to UC
+    run_preprocessing(config)
+    logger.info("Preprocessing raw data finished.")
 
 
 if __name__ == "__main__":
