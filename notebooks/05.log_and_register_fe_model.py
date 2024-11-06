@@ -12,8 +12,8 @@ from sklearn.metrics import accuracy_score, classification_report
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import OneHotEncoder
 
-from packages.config import ProjectConfig
-from packages.paths import AllPaths
+from hotel_reservation.config import ProjectConfig
+from hotel_reservation.paths import AllPaths
 
 # COMMAND ----------
 

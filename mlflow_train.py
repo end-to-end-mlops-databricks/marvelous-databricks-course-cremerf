@@ -10,8 +10,8 @@ import mlflow
 import pandas as pd
 from pyspark.sql import SparkSession
 
-from packages.config import ProjectConfig
-from packages.paths import AllPaths
+from hotel_reservation.config import ProjectConfig
+from hotel_reservation.paths import AllPaths
 
 ALLPATHS = AllPaths()
 config = ProjectConfig.from_yaml(config_path=ALLPATHS.filename_config)

@@ -3,8 +3,8 @@ import logging
 import yaml
 
 from prepare_dataset import run_preprocessing
-from src.packages.config import ProjectConfig
-from src.packages.paths import AllPaths
+from src.hotel_reservation.config import ProjectConfig
+from src.hotel_reservation.paths import AllPaths
 
 ALLPATHS = AllPaths()
 

@@ -2,8 +2,8 @@ from pyspark.sql import SparkSession
 from sklearn.metrics import ConfusionMatrixDisplay, accuracy_score, classification_report, confusion_matrix
 from sklearn.pipeline import Pipeline
 
-from packages.config import ProjectConfig
-from packages.paths import AllPaths
+from hotel_reservation.config import ProjectConfig
+from hotel_reservation.paths import AllPaths
 
 ALLPATHS = AllPaths()
 

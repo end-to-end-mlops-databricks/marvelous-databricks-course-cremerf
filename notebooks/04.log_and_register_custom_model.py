@@ -12,10 +12,10 @@ from sklearn.compose import ColumnTransformer
 from sklearn.metrics import accuracy_score, classification_report
 from sklearn.preprocessing import OneHotEncoder
 
+from hotel_reservation.classifier import CancellationModel
+from hotel_reservation.config import ProjectConfig
+from hotel_reservation.paths import AllPaths
 from mlflow_train import CancellatioModelWrapper
-from packages.classifier import CancellationModel
-from packages.config import ProjectConfig
-from packages.paths import AllPaths
 
 # COMMAND ----------
 
