@@ -5,8 +5,8 @@ import logging
 # Overall
 from pyspark.sql import SparkSession
 
-from packages.paths import AllPaths
-from packages.preprocessing import Preprocessor
+from src.packages.paths import AllPaths
+from src.packages.preprocessing import Preprocessor
 
 ALLPATHS = AllPaths()
 spark = SparkSession.builder.getOrCreate()
