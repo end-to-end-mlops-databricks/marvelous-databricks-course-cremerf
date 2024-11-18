@@ -44,12 +44,12 @@ workspace.serving_endpoints.create(
                 entity_name=f"{catalog_name}.{schema_name}.hotel_reservation_cremerf_pyfunc",
                 scale_to_zero_enabled=True,
                 workload_size="Small",
-                entity_version=3,
+                entity_version=5,
             )
         ],
         # Optional if only 1 entity is served
         traffic_config=TrafficConfig(
-            routes=[Route(served_model_name="hotel_reservation_cremerf_pyfunc-3", traffic_percentage=100)]
+            routes=[Route(served_model_name="hotel_reservation_cremerf_pyfunc-5", traffic_percentage=100)]
         ),
     ),
 )
@@ -118,7 +118,7 @@ print("Execution time:", execution_time, "seconds")
 # MAGIC %md
 # MAGIC ## 4. Load Test
 # MAGIC We send multiple concurrent requests to the endpoint to measure latency and evaluate performance.
-
+# MAGIC
 
 # COMMAND ----------
 
@@ -164,5 +164,3 @@ average_latency = sum(latencies) / len(latencies)
 
 print("\nTotal execution time:", total_execution_time, "seconds")
 print("Average latency per request:", average_latency, "seconds")
-
-# COMMAND ----------

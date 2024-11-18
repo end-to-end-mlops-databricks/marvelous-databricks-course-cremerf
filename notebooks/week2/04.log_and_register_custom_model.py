@@ -7,7 +7,7 @@ from lightgbm import LGBMClassifier
 from mlflow import MlflowClient
 from mlflow.models import infer_signature
 from mlflow.utils.environment import _mlflow_conda_env
-from mlflow_train import CancellatioModelWrapper
+from src.hotel_reservation.mlflow_train import CancellatioModelWrapper
 from pyspark.sql import SparkSession
 from sklearn.compose import ColumnTransformer
 from sklearn.metrics import accuracy_score, classification_report
@@ -46,7 +46,7 @@ schema_name = config.schema_name
 spark = SparkSession.builder.getOrCreate()
 
 # COMMAND ----------
-
+"""
 run_id = mlflow.search_runs(
     experiment_names=["/Shared/hotel-reservations-cremerf"],
     filter_string="tags.branch='week2'",
@@ -54,7 +54,7 @@ run_id = mlflow.search_runs(
 
 model = mlflow.sklearn.load_model(f"runs:/{run_id}/lightgbm-pipeline-model")
 
-
+"""
 # COMMAND ----------
 
 train_set = spark.table(f"{catalog_name}.{schema_name}.train_set")
@@ -84,7 +84,7 @@ example_input = X_test.iloc[0:1]  # Select the first row for prediction as examp
 # COMMAND ----------
 
 mlflow.set_experiment(experiment_name="/Shared/hotel-reservations-cremerf-pyfunc-v1")
-git_sha = "f6564c4210596362360ac94671e3c2621330bac2"
+git_sha = "ebed524ba1359e9748503ff003de40606f2134c7"
 
 with mlflow.start_run(
     tags={
@@ -134,7 +134,7 @@ with mlflow.start_run(
     mlflow.pyfunc.log_model(
         python_model=wrapped_model,
         artifact_path="pyfunc-hotel-reservations-cremerf-model",
-        # code_paths=["../Volumes/mlops_students/cremerfederico29/packages/"],
+        code_paths=["/Volumes/mlops_students/cremerfederico29/packages"],
         signature=signature,
     )
 
@@ -158,8 +158,8 @@ with open("model_version.json", "w") as json_file:
 
 # COMMAND ----------
 
-model_version_alias = "the_best_model_v3"
-client.set_registered_model_alias(model_name, model_version_alias, "3")
+model_version_alias = "the_best_model_v5"
+client.set_registered_model_alias(model_name, model_version_alias, "5")
 
 model_uri = f"models:/{model_name}@{model_version_alias}"
 model = mlflow.pyfunc.load_model(model_uri)
