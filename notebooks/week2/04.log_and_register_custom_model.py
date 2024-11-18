@@ -84,7 +84,7 @@ example_input = X_test.iloc[0:1]  # Select the first row for prediction as examp
 # COMMAND ----------
 
 mlflow.set_experiment(experiment_name="/Shared/hotel-reservations-cremerf-pyfunc-v1")
-git_sha = "3970ea021fe9e7d19cd1fbff0c3205a28cf5ee18"
+git_sha = "f6564c4210596362360ac94671e3c2621330bac2"
 
 with mlflow.start_run(
     tags={
@@ -158,8 +158,8 @@ with open("model_version.json", "w") as json_file:
 
 # COMMAND ----------
 
-model_version_alias = "the_best_model_v2"
-client.set_registered_model_alias(model_name, model_version_alias, "2")
+model_version_alias = "the_best_model_v3"
+client.set_registered_model_alias(model_name, model_version_alias, "3")
 
 model_uri = f"models:/{model_name}@{model_version_alias}"
 model = mlflow.pyfunc.load_model(model_uri)
