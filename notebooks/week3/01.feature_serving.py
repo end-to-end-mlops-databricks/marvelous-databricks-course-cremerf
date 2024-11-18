@@ -34,7 +34,6 @@ from databricks.sdk.service.serving import EndpointCoreConfigInput, ServedEntity
 from pyspark.dbutils import DBUtils
 from pyspark.sql import SparkSession
 
-from hotel_reservation.classifier import CancellationModel
 from hotel_reservation.config import ProjectConfig
 from hotel_reservation.paths import AllPaths
 

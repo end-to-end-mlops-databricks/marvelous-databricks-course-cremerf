@@ -7,7 +7,6 @@ from lightgbm import LGBMClassifier
 from mlflow import MlflowClient
 from mlflow.models import infer_signature
 from mlflow.utils.environment import _mlflow_conda_env
-from src.hotel_reservation.mlflow_train import CancellatioModelWrapper
 from pyspark.sql import SparkSession
 from sklearn.compose import ColumnTransformer
 from sklearn.metrics import accuracy_score, classification_report
@@ -16,6 +15,7 @@ from sklearn.preprocessing import OneHotEncoder
 from hotel_reservation.classifier import CancellationModel
 from hotel_reservation.config import ProjectConfig
 from hotel_reservation.paths import AllPaths
+from src.hotel_reservation.mlflow_train import CancellatioModelWrapper
 
 # COMMAND ----------
 
