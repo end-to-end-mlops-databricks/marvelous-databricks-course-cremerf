@@ -13,8 +13,8 @@ from databricks.sdk.service.serving import (
 )
 from pyspark.sql import SparkSession
 
-from src.hotel_reservation.config import ProjectConfig
-from src.hotel_reservation.paths import AllPaths
+from hotel_reservation.config import ProjectConfig
+from hotel_reservation.paths import AllPaths
 
 workspace = WorkspaceClient()
 spark = SparkSession.builder.getOrCreate()

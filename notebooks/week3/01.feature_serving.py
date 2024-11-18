@@ -34,9 +34,9 @@ from databricks.sdk.service.serving import EndpointCoreConfigInput, ServedEntity
 from pyspark.dbutils import DBUtils
 from pyspark.sql import SparkSession
 
-# from hotel_reservation.classifier import CancellationModel
-from src.hotel_reservation.config import ProjectConfig
-from src.hotel_reservation.paths import AllPaths
+from hotel_reservation.classifier import CancellationModel
+from hotel_reservation.config import ProjectConfig
+from hotel_reservation.paths import AllPaths
 
 spark = SparkSession.builder.getOrCreate()
 
@@ -177,7 +177,7 @@ fe.create_feature_spec(name=feature_spec_name, features=features, exclude_column
 # MAGIC %md
 # MAGIC ## 8. Deploy Feature Serving Endpoint
 # MAGIC We deploy a feature serving endpoint using the feature specification.
-
+# MAGIC
 
 # COMMAND ----------
 
@@ -242,6 +242,7 @@ response = requests.post(
 # MAGIC ## Load Test
 
 # COMMAND ----------
+
 # Initialize variables
 serving_endpoint = f"https://{host}/serving-endpoints/hotel-reservations-cremerf-feature-serving/invocations"
 id_list = preds_df.select("Booking_ID").rdd.flatMap(lambda x: x).collect()
