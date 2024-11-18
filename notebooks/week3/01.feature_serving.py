@@ -31,12 +31,12 @@ from databricks.sdk.service.catalog import (
     OnlineTableSpecTriggeredSchedulingPolicy,
 )
 from databricks.sdk.service.serving import EndpointCoreConfigInput, ServedEntityInput
+from pyspark.dbutils import DBUtils
 from pyspark.sql import SparkSession
 
-#from hotel_reservation.classifier import CancellationModel
+# from hotel_reservation.classifier import CancellationModel
 from src.hotel_reservation.config import ProjectConfig
 from src.hotel_reservation.paths import AllPaths
-from pyspark.dbutils import DBUtils
 
 spark = SparkSession.builder.getOrCreate()
 
@@ -249,6 +249,7 @@ headers = {"Authorization": f"Bearer {token}"}
 num_requests = 10
 
 # COMMAND ----------
+
 
 def send_request():
     random_id = random.choice(id_list)

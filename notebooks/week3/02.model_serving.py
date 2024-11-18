@@ -1,22 +1,20 @@
 # Databricks notebook source
-import time
-
-import requests
 import random
+import time
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
+import requests
 from databricks.sdk import WorkspaceClient
 from databricks.sdk.service.serving import (
     EndpointCoreConfigInput,
+    Route,
     ServedEntityInput,
     TrafficConfig,
-    Route,
 )
+from pyspark.sql import SparkSession
 
 from src.hotel_reservation.config import ProjectConfig
 from src.hotel_reservation.paths import AllPaths
-from pyspark.sql import SparkSession
-from pyspark.dbutils import DBUtils
 
 workspace = WorkspaceClient()
 spark = SparkSession.builder.getOrCreate()
@@ -132,6 +130,7 @@ num_requests = 1000
 
 # COMMAND ----------
 
+
 # Function to make a request and record latency
 def send_request():
     random_record = random.choice(dataframe_records)
@@ -167,5 +166,3 @@ print("\nTotal execution time:", total_execution_time, "seconds")
 print("Average latency per request:", average_latency, "seconds")
 
 # COMMAND ----------
-
-

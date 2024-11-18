@@ -30,7 +30,7 @@ Steps:
 ```
 02.model_serving.py
 ```
-Model serving is a process of creating a model serving endpoint that can be used for inference. Endpoint creation process is similar to feature serving, with the exception that we don't need to create a feature table. Instead, we simply create a model serving endpoint that relies on the model we trained. 
+Model serving is a process of creating a model serving endpoint that can be used for inference. Endpoint creation process is similar to feature serving, with the exception that we don't need to create a feature table. Instead, we simply create a model serving endpoint that relies on the model we trained.
 
 Steps:
 * We start with loading the trained and registered model.
@@ -50,7 +50,7 @@ Steps:
 - We start with creating an online table for existing offline feature table, house_features. This is the table we created last week on *week 2 - 05.log_and_register_fe_model.py* notebook.
 - This online table is required for our model to look up features at serving endpoint.
 - Next is the same as in the previous notebook, we create an endpoint using the model we registred in the same notebook *week 2 - 05.log_and_register_fe_model.p*. This is the model we registred using feature lookup and feature func.
-- When we send request to the model endpoint, this time, we won't need to provide all the features. 3 features will be taken from the feature lookup table, also one feature "house_age" will be calculated by the feature function. 
+- When we send request to the model endpoint, this time, we won't need to provide all the features. 3 features will be taken from the feature lookup table, also one feature "house_age" will be calculated by the feature function.
 
 
 ### 4. A/B Testing
@@ -60,7 +60,7 @@ Steps:
 In this notebook, we show the setup of A/B testing for two different model versions using Pyfunc. We'll train, register, and implement a serving endpoint that uses a Pyfunc model as a wrapper for these versions.
 
 Steps:
-- We start with loading the configurations, parameters for model A and model B, training and testing datasets. 
+- We start with loading the configurations, parameters for model A and model B, training and testing datasets.
 - We use the same approach as we did in *week 2 - 03.log_and_register_model.py*.
 - We train the model A and model B, and register them.
 - After training, we create aliases for each model version, referred to as `model_A` and `model_B`.
