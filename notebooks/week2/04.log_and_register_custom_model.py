@@ -138,7 +138,8 @@ with mlflow.start_run(
         python_model=wrapped_model,
         conda_env=conda_env,
         artifact_path="pyfunc-hotel-reservations-cremerf-model",
-        code_paths=["/Volumes/mlops_students/cremerfederico29/packages/marvelmlops-0.0.1-py3-none-any.whl"],
+        code_paths=["/Volumes/mlops_students/cremerfederico29/packages/marvelmlops-0.0.1-py3-none-any.whl",
+                    "../../project-config.yml"],
         signature=signature,
     )
 
