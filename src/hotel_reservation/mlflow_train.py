@@ -24,19 +24,6 @@ parameters = config.parameters
 catalog_name = config.catalog_name
 schema_name = config.schema_name
 
-"""
-mlflow.set_registry_uri("databricks-uc")
-mlflow.set_tracking_uri("databricks")
-client = MlflowClient()
-
-run_id = mlflow.search_runs(
-    experiment_names=["/Shared/hotel-reservations-cremerf"],
-    filter_string="tags.branch='week2'",
-).run_id[0]
-
-model = mlflow.sklearn.load_model(f"runs:/{run_id}/lightgbm-pipeline-model")
-"""
-
 
 class CancellatioModelWrapper(mlflow.pyfunc.PythonModel):
     def __init__(self, model):

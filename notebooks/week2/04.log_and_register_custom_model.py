@@ -128,6 +128,7 @@ with mlflow.start_run(
         additional_conda_deps=None,
         additional_pip_deps=[
             "code/marvelmlops-0.0.1-py3-none-any.whl",
+            "pyspark==3.5.0"
         ],
         additional_conda_channels=None,
     )
