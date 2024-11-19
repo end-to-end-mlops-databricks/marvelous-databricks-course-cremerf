@@ -131,8 +131,10 @@ with mlflow.start_run(
         ],
         additional_conda_channels=None,
     )
+
     mlflow.pyfunc.log_model(
         python_model=wrapped_model,
+        conda_env=conda_env,
         artifact_path="pyfunc-hotel-reservations-cremerf-model",
         code_paths=["/Volumes/mlops_students/cremerfederico29/packages/marvelmlops-0.0.1-py3-none-any.whl"],
         signature=signature,
@@ -158,8 +160,8 @@ with open("model_version.json", "w") as json_file:
 
 # COMMAND ----------
 
-model_version_alias = "the_best_model_v6"
-client.set_registered_model_alias(model_name, model_version_alias, "6")
+model_version_alias = "the_best_model_v14"
+client.set_registered_model_alias(model_name, model_version_alias, "14")
 
 model_uri = f"models:/{model_name}@{model_version_alias}"
 model = mlflow.pyfunc.load_model(model_uri)
