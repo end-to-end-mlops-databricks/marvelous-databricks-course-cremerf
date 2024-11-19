@@ -1,29 +1,8 @@
-# SDK
-
-# Built-in
-
-
 # MLFlow
 import mlflow
 
 # Overall
 import pandas as pd
-from pyspark.sql import SparkSession
-
-from hotel_reservation.config import ProjectConfig
-from hotel_reservation.paths import AllPaths
-
-ALLPATHS = AllPaths()
-config = ProjectConfig.from_yaml(config_path=ALLPATHS.filename_config)
-spark = SparkSession.builder.getOrCreate()
-
-num_features = config.num_features
-cat_features = config.cat_features
-target = config.target
-parameters = config.parameters
-catalog_name = config.catalog_name
-schema_name = config.schema_name
-
 
 class CancellatioModelWrapper(mlflow.pyfunc.PythonModel):
     def __init__(self, model):
