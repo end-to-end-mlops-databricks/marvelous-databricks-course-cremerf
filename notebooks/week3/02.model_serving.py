@@ -32,7 +32,7 @@ train_set = spark.table(f"{catalog_name}.{schema_name}.train_set").toPandas()
 
 # MAGIC %md
 # MAGIC ## 2. Deploy Model Serving Endpoint
-# MAGIC Here, we deploy a model serving endpoint for the `hotel_reservations_model_basic`.
+# MAGIC Here, we deploy a model serving endpoint for the `hotel_reservation_cremerf_pyfunc`.
 
 # COMMAND ----------
 
@@ -44,12 +44,12 @@ workspace.serving_endpoints.create(
                 entity_name=f"{catalog_name}.{schema_name}.hotel_reservation_cremerf_pyfunc",
                 scale_to_zero_enabled=True,
                 workload_size="Small",
-                entity_version=6,
+                entity_version=16,
             )
         ],
         # Optional if only 1 entity is served
         traffic_config=TrafficConfig(
-            routes=[Route(served_model_name="hotel_reservation_cremerf_pyfunc-6", traffic_percentage=100)]
+            routes=[Route(served_model_name="hotel_reservation_cremerf_pyfunc-16", traffic_percentage=100)]
         ),
     ),
 )
