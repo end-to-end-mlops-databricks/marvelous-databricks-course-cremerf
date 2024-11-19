@@ -15,7 +15,7 @@ from sklearn.preprocessing import OneHotEncoder
 from hotel_reservation.classifier import CancellationModel
 from hotel_reservation.config import ProjectConfig
 from hotel_reservation.paths import AllPaths
-from src.hotel_reservation.mlflow_train import CancellatioModelWrapper
+from hotel_reservation.mlflow_train import CancellatioModelWrapper
 
 # COMMAND ----------
 
