@@ -44,7 +44,12 @@ ab_test_params = config.ab_test
 
 # COMMAND ----------
 
-
+# Set up specific parameters for model A as part of the A/B test
+parameters_a = {
+    "learning_rate": ab_test_params["learning_rate_a"],
+    "n_estimators": ab_test_params["n_estimators_a"],
+    "max_depth": ab_test_params["max_depth_a"],
+}
 
 # COMMAND ----------
 
