@@ -4,7 +4,6 @@ from pathlib import Path
 import yaml
 from dotenv import load_dotenv
 
-
 class AllPaths:
     def __init__(self) -> None:
         load_dotenv()  # Load environment variables from .env file if present

@@ -8,11 +8,13 @@ class CancellatioModelWrapper(mlflow.pyfunc.PythonModel):
     def __init__(self, model):
         self.model = model
 
-    def predict(self, model_input, return_proba=False):
+    def predict(self, context, model_input):
         if not isinstance(model_input, pd.DataFrame):
             raise ValueError("Input must be a pandas DataFrame.")
 
-        # Prediction based on specified mode
+        # Set 'return_proba' to a default value
+        return_proba = False  # Change to True if you want probabilities by default
+
         if return_proba:
             # Predict probabilities for each class
             probabilities = self.model.predict_proba(model_input)
