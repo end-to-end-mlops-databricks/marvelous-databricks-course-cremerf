@@ -44,12 +44,12 @@ workspace.serving_endpoints.create(
                 entity_name=f"{catalog_name}.{schema_name}.hotel_reservation_cremerf_pyfunc",
                 scale_to_zero_enabled=True,
                 workload_size="Small",
-                entity_version=20,
+                entity_version=21,
             )
         ],
         # Optional if only 1 entity is served
         traffic_config=TrafficConfig(
-            routes=[Route(served_model_name="hotel_reservation_cremerf_pyfunc-20", traffic_percentage=100)]
+            routes=[Route(served_model_name="hotel_reservation_cremerf_pyfunc-21", traffic_percentage=100)]
         ),
     ),
 )
@@ -103,7 +103,7 @@ model_serving_endpoint = f"https://{host}/serving-endpoints/hotel-reservations-c
 response = requests.post(
     f"{model_serving_endpoint}",
     headers={"Authorization": f"Bearer {token}"},
-    json={"dataframe_records": dataframe_records[0]},
+    json={"dataframe_records": dataframe_records[4]},
 )
 
 end_time = time.time()
@@ -123,7 +123,7 @@ print("Execution time:", execution_time, "seconds")
 # COMMAND ----------
 
 # Initialize variables
-model_serving_endpoint = f"https://{host}/serving-endpoints/hotel-reservations-mk-model-serving/invocations"
+model_serving_endpoint = f"https://{host}/serving-endpoints/hotel-reservations-cremerf-model-serving/invocations"
 
 headers = {"Authorization": f"Bearer {token}"}
 num_requests = 1000
