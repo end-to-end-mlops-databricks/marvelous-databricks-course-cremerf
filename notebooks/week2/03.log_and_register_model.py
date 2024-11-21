@@ -3,7 +3,6 @@
 
 # COMMAND ----------
 
-# Databricks notebook source
 
 import mlflow
 from lightgbm import LGBMClassifier
@@ -74,7 +73,7 @@ model_pipeline = CancellationModel(config=config, preprocessor=preprocessor, cla
 # COMMAND ----------
 
 mlflow.set_experiment(experiment_name="/Shared/hotel-reservations-cremerf")
-git_sha = "b3fd67dfc8595127c3f8787b59116a064195df53"
+git_sha = "f6564c4210596362360ac94671e3c2621330bac2"
 
 # Start an MLflow run to track the training process
 with mlflow.start_run(
