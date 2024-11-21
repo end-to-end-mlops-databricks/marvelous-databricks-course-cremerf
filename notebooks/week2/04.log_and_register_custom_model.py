@@ -14,8 +14,8 @@ from sklearn.preprocessing import OneHotEncoder
 
 from hotel_reservation.classifier import CancellationModel
 from hotel_reservation.config import ProjectConfig
-from hotel_reservation.paths import AllPaths
 from hotel_reservation.mlflow_train import CancellatioModelWrapper
+from hotel_reservation.paths import AllPaths
 
 # COMMAND ----------
 
@@ -126,11 +126,7 @@ with mlflow.start_run(
     mlflow.log_input(dataset, context="training")
     conda_env = _mlflow_conda_env(
         additional_conda_deps=None,
-        additional_pip_deps=[
-            "code/marvelmlops-0.0.1-py3-none-any.whl",
-            "pyspark==3.5.0",
-            "python-dotenv==1.0.1"
-        ],
+        additional_pip_deps=["code/marvelmlops-0.0.1-py3-none-any.whl", "pyspark==3.5.0", "python-dotenv==1.0.1"],
         additional_conda_channels=None,
     )
 
@@ -138,8 +134,10 @@ with mlflow.start_run(
         python_model=wrapped_model,
         conda_env=conda_env,
         artifact_path="pyfunc-hotel-reservations-cremerf-model",
-        code_paths=["/Volumes/mlops_students/cremerfederico29/packages/marvelmlops-0.0.1-py3-none-any.whl",
-                    "../../project-config.yml"],
+        code_paths=[
+            "/Volumes/mlops_students/cremerfederico29/packages/marvelmlops-0.0.1-py3-none-any.whl",
+            "../../project-config.yml",
+        ],
         signature=signature,
     )
 

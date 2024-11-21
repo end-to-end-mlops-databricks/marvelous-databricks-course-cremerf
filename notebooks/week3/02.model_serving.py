@@ -11,6 +11,7 @@ from databricks.sdk.service.serving import (
     ServedEntityInput,
     TrafficConfig,
 )
+from pyspark.dbutils import DBUtils
 from pyspark.sql import SparkSession
 
 from hotel_reservation.config import ProjectConfig
@@ -60,7 +61,7 @@ workspace.serving_endpoints.create(
 # MAGIC ## Call the endpoint
 
 # COMMAND ----------
-
+dbutils = DBUtils(spark)
 token = dbutils.notebook.entry_point.getDbutils().notebook().getContext().apiToken().get()
 host = spark.conf.get("spark.databricks.workspaceUrl")
 

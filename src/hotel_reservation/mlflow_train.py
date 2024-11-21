@@ -4,6 +4,7 @@ import mlflow
 # Overall
 import pandas as pd
 
+
 class CancellatioModelWrapper(mlflow.pyfunc.PythonModel):
     def __init__(self, model):
         self.model = model

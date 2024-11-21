@@ -11,15 +11,12 @@ The source Delta table and the online table must use the same primary key.
 """
 
 # COMMAND ----------
-
-dbutils.library.restartPython()
-
-# COMMAND ----------
-
+# Standard library imports
 import random
 import time
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
+# Third-party imports
 import mlflow
 import pandas as pd
 import requests
@@ -34,6 +31,7 @@ from databricks.sdk.service.serving import EndpointCoreConfigInput, ServedEntity
 from pyspark.dbutils import DBUtils
 from pyspark.sql import SparkSession
 
+# Local application imports
 from hotel_reservation.config import ProjectConfig
 from hotel_reservation.paths import AllPaths
 

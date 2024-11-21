@@ -7,6 +7,7 @@
 
 import time
 
+import pandas as pd
 import requests
 from databricks.sdk import WorkspaceClient
 from databricks.sdk.service.catalog import (
@@ -14,12 +15,11 @@ from databricks.sdk.service.catalog import (
     OnlineTableSpecTriggeredSchedulingPolicy,
 )
 from databricks.sdk.service.serving import EndpointCoreConfigInput, ServedEntityInput
+from pyspark.dbutils import DBUtils
 from pyspark.sql import SparkSession
 
 from hotel_reservation.config import ProjectConfig
 from hotel_reservation.paths import AllPaths
-from pyspark.dbutils import DBUtils
-
 
 spark = SparkSession.builder.getOrCreate()
 
@@ -106,7 +106,7 @@ required_columns = [
     "lead_time",
     "no_of_special_requests",
     "avg_price_per_room",
-    #"loyalty_score"
+    # "loyalty_score"
 ]
 
 train_set = spark.table(f"{catalog_name}.{schema_name}.train_set").toPandas()
@@ -114,11 +114,14 @@ train_set = spark.table(f"{catalog_name}.{schema_name}.train_set").toPandas()
 # COMMAND ----------
 
 # Assuming 'train_set' already has the 'update_timestamp_utc' column as Timestamp objects
-import pandas as pd
-train_set['update_timestamp_utc'] = train_set['update_timestamp_utc'].apply(lambda x: x.isoformat() if pd.notnull(x) else None)
+train_set["update_timestamp_utc"] = train_set["update_timestamp_utc"].apply(
+    lambda x: x.isoformat() if pd.notnull(x) else None
+)
 
 # If you're preparing sampled_records as previously described
-sampled_records = train_set[required_columns + ['update_timestamp_utc']].sample(n=1000, replace=True).to_dict(orient='records')
+sampled_records = (
+    train_set[required_columns + ["update_timestamp_utc"]].sample(n=1000, replace=True).to_dict(orient="records")
+)
 dataframe_records = [[record] for record in sampled_records]
 
 # COMMAND ----------
@@ -156,8 +159,3 @@ print("Execution time:", execution_time, "seconds")
 # COMMAND ----------
 
 house_features = spark.table(f"{catalog_name}.{schema_name}.hotel_features").toPandas()
-
-
-# COMMAND ----------
-
-house_features.dtypes

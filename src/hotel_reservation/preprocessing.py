@@ -7,6 +7,7 @@ from sklearn.model_selection import train_test_split
 
 from hotel_reservation.config import ProjectConfig
 
+
 class Preprocessor:
     def __init__(self, pandas_df: pd.DataFrame, config: ProjectConfig) -> None:
         self.config = config

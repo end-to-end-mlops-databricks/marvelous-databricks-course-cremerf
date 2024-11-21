@@ -1,6 +1,7 @@
 from sklearn.metrics import ConfusionMatrixDisplay, accuracy_score, classification_report, confusion_matrix
 from sklearn.pipeline import Pipeline
 
+
 class CancellationModel:
     def __init__(self, config, preprocessor, classifier) -> None:
         try:

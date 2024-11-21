@@ -4,24 +4,23 @@
 
 # COMMAND ----------
 
+import hashlib
 import time
 
 import mlflow
 import pandas as pd
+import requests
 from databricks.sdk import WorkspaceClient
 from databricks.sdk.service.serving import EndpointCoreConfigInput, ServedEntityInput
 from lightgbm import LGBMClassifier
 from mlflow import MlflowClient
-from pyspark.dbutils import DBUtils
 from mlflow.models import infer_signature
+from pyspark.dbutils import DBUtils
 from pyspark.sql import SparkSession
 from sklearn.compose import ColumnTransformer
-from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
-from sklearn.pipeline import Pipeline
 from sklearn.metrics import accuracy_score, log_loss
+from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import OneHotEncoder
-import hashlib
-import requests
 
 from hotel_reservation.config import ProjectConfig
 from hotel_reservation.paths import AllPaths
@@ -207,6 +206,7 @@ model_B = mlflow.sklearn.load_model(model_uri)
 
 # COMMAND ----------
 
+
 # Define a custom A/B test model that selects the model based on hashed booking ID
 class HotelReservationModelWrapper(mlflow.pyfunc.PythonModel):
     def __init__(self, models):
@@ -235,6 +235,7 @@ class HotelReservationModelWrapper(mlflow.pyfunc.PythonModel):
         else:
             predictions = self.model_b.predict(model_input.drop(["Booking_ID"], axis=1))
             return {"Prediction": predictions[0], "model": "Model B"}
+
 
 # COMMAND ----------
 
@@ -270,9 +271,6 @@ model = mlflow.pyfunc.load_model(model_uri=f"models:/{model_name}/{model_version
 
 # Run prediction
 predictions = model.predict(X_test.iloc[0:1])
-
-# Display predictions
-predictions
 
 # COMMAND ----------
 
@@ -339,7 +337,9 @@ dataframe_records = [[record] for record in sampled_records]
 
 start_time = time.time()
 
-model_serving_endpoint = f"https://{host}/serving-endpoints/hotel-reservations-cremerf-model-serving-ab-test/invocations"
+model_serving_endpoint = (
+    f"https://{host}/serving-endpoints/hotel-reservations-cremerf-model-serving-ab-test/invocations"
+)
 
 response = requests.post(
     f"{model_serving_endpoint}",
