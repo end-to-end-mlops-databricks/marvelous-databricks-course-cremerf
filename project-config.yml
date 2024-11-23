@@ -15,6 +15,14 @@ parameters:
   reg_lambda: 0.0
   random_state: 42
 
+ab_test:
+  learning_rate_a: 0.01
+  n_estimators_a: 100
+  max_depth_a: 5
+  learning_rate_b: 0.05
+  n_estimators_b: 150
+  max_depth_b: 7
+
 num_features:
   - no_of_adults
   - no_of_children

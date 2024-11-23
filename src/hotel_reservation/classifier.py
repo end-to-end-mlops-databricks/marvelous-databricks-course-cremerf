@@ -1,15 +1,5 @@
-from pyspark.sql import SparkSession
 from sklearn.metrics import ConfusionMatrixDisplay, accuracy_score, classification_report, confusion_matrix
 from sklearn.pipeline import Pipeline
-
-from hotel_reservation.config import ProjectConfig
-from hotel_reservation.paths import AllPaths
-
-ALLPATHS = AllPaths()
-
-config = ProjectConfig.from_yaml(config_path=ALLPATHS.filename_config)
-
-spark = SparkSession.builder.getOrCreate()
 
 
 class CancellationModel:

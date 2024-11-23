@@ -14,8 +14,8 @@ from sklearn.preprocessing import OneHotEncoder
 
 from hotel_reservation.classifier import CancellationModel
 from hotel_reservation.config import ProjectConfig
+from hotel_reservation.mlflow_train import CancellatioModelWrapper
 from hotel_reservation.paths import AllPaths
-from mlflow_train import CancellatioModelWrapper
 
 # COMMAND ----------
 
@@ -46,7 +46,7 @@ schema_name = config.schema_name
 spark = SparkSession.builder.getOrCreate()
 
 # COMMAND ----------
-
+"""
 run_id = mlflow.search_runs(
     experiment_names=["/Shared/hotel-reservations-cremerf"],
     filter_string="tags.branch='week2'",
@@ -54,7 +54,7 @@ run_id = mlflow.search_runs(
 
 model = mlflow.sklearn.load_model(f"runs:/{run_id}/lightgbm-pipeline-model")
 
-
+"""
 # COMMAND ----------
 
 train_set = spark.table(f"{catalog_name}.{schema_name}.train_set")
@@ -84,7 +84,7 @@ example_input = X_test.iloc[0:1]  # Select the first row for prediction as examp
 # COMMAND ----------
 
 mlflow.set_experiment(experiment_name="/Shared/hotel-reservations-cremerf-pyfunc-v1")
-git_sha = "3970ea021fe9e7d19cd1fbff0c3205a28cf5ee18"
+git_sha = "ebed524ba1359e9748503ff003de40606f2134c7"
 
 with mlflow.start_run(
     tags={
@@ -126,15 +126,18 @@ with mlflow.start_run(
     mlflow.log_input(dataset, context="training")
     conda_env = _mlflow_conda_env(
         additional_conda_deps=None,
-        additional_pip_deps=[
-            "code/marvelmlops-0.0.1-py3-none-any.whl",
-        ],
+        additional_pip_deps=["code/marvelmlops-0.0.1-py3-none-any.whl", "pyspark==3.5.0", "python-dotenv==1.0.1"],
         additional_conda_channels=None,
     )
+
     mlflow.pyfunc.log_model(
         python_model=wrapped_model,
+        conda_env=conda_env,
         artifact_path="pyfunc-hotel-reservations-cremerf-model",
-        # code_paths=["../Volumes/mlops_students/cremerfederico29/packages/"],
+        code_paths=[
+            "/Volumes/mlops_students/cremerfederico29/packages/marvelmlops-0.0.1-py3-none-any.whl",
+            "../../project-config.yml",
+        ],
         signature=signature,
     )
 
@@ -158,8 +161,8 @@ with open("model_version.json", "w") as json_file:
 
 # COMMAND ----------
 
-model_version_alias = "the_best_model_v2"
-client.set_registered_model_alias(model_name, model_version_alias, "2")
+model_version_alias = "the_best_model_v14"
+client.set_registered_model_alias(model_name, model_version_alias, "14")
 
 model_uri = f"models:/{model_name}@{model_version_alias}"
 model = mlflow.pyfunc.load_model(model_uri)
