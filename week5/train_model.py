@@ -161,10 +161,15 @@ with mlflow.start_run(tags={"branch": "week5",
             mlflow.log_metric(f"f1-score_{class_label}", metrics["f1-score"])
 
     signature = infer_signature(model_input=X_train, model_output=y_pred)
-    mlflow.log_input(dataset, context="training")
 
-    mlflow.sklearn.log_model(sk_model=model_pipeline, artifact_path="lightgbm-pipeline-model-fe", signature=signature)
-
+    # Log model with feature engineering
+    fe.log_model(
+        model=model_pipeline,
+        flavor=mlflow.sklearn,
+        artifact_path="lightgbm-pipeline-model-fe",
+        training_set=training_set,
+        signature=signature,
+    )
 
 model_uri=f'runs:/{run_id}/lightgbm-pipeline-model-fe'
 dbutils.jobs.taskValues.set(key="new_model_uri", value=model_uri)
