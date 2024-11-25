@@ -1,5 +1,25 @@
 import pandas as pd
 import numpy as np
+from pyspark.sql.functions import current_timestamp, to_utc_timestamp
+from hotel_reservation.config import ProjectConfig
+from hotel_reservation.paths import AllPaths
+
+ALLPATHS = AllPaths()
+
+config = ProjectConfig.from_yaml(config_path=ALLPATHS.filename_config)
+
+
+catalog_name = config.catalog_name
+schema_name = config.schema_name
+
+# Load training and test sets from Catalog
+train_set = spark.table(f"{catalog_name}.{schema_name}.train_set").toPandas()
+test_set = spark.table(f"{catalog_name}.{schema_name}.test_set").toPandas()
+combined_set = pd.concat([train_set, test_set], ignore_index=True)
+
+import pandas as pd
+import numpy as np
+from pandas.api.types import CategoricalDtype
 
 def create_synthetic_data(df, num_rows=100):
     synthetic_data = pd.DataFrame()
@@ -20,7 +40,7 @@ def create_synthetic_data(df, num_rows=100):
                 else:
                     synthetic_data[column] = synthetic_data[column].astype(df[column].dtype)
 
-        elif pd.api.types.is_categorical_dtype(df[column]) or pd.api.types.is_object_dtype(df[column]):
+        elif isinstance(df[column].dtype, CategoricalDtype) or pd.api.types.is_object_dtype(df[column]):
             synthetic_data[column] = np.random.choice(
                 df[column].unique(), num_rows, p=df[column].value_counts(normalize=True)
             )
@@ -54,3 +74,21 @@ def create_synthetic_data(df, num_rows=100):
     synthetic_data = synthetic_data[df.columns]
 
     return synthetic_data
+
+synthetic_df = create_synthetic_data(combined_set)
+
+existing_schema = spark.table(f"{catalog_name}.{schema_name}.source_data").schema
+
+synthetic_spark_df = spark.createDataFrame(synthetic_df, schema=existing_schema)
+
+train_set_with_timestamp = synthetic_spark_df.withColumn(
+    "update_timestamp_utc", to_utc_timestamp(current_timestamp(), "UTC")
+)
+
+# Append synthetic data as new data to source_data table
+train_set_with_timestamp.write.mode("append").saveAsTable(
+    f"{catalog_name}.{schema_name}.source_data"
+)
+
+
+
