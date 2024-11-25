@@ -1,5 +1,6 @@
 catalog_name: mlops_students
 schema_name: cremerfederico29
+pipeline_id: 26a1d95f-487c-45ed-8350-4d6964fd1053
 
 id_field: Booking_ID
 
