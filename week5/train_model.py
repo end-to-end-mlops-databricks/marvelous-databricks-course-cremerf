@@ -24,13 +24,42 @@ from lightgbm import LGBMClassifier
 from hotel_reservation.classifier import CancellationModel
 from mlflow.models import infer_signature
 from sklearn.compose import ColumnTransformer
-from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score
+from sklearn.metrics import accuracy_score, classification_report
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import OneHotEncoder
 from datetime import datetime
 from databricks.feature_engineering import FeatureFunction, FeatureLookup
 from hotel_reservation.config import ProjectConfig
 from hotel_reservation.paths import AllPaths
+
+
+parser = argparse.ArgumentParser()
+parser.add_argument(
+    "--root_path",
+    action="store",
+    default=None,
+    type=str,
+    required=True,
+)
+parser.add_argument(
+    "--git_sha",
+    action="store",
+    default=None,
+    type=str,
+    required=True,
+)
+parser.add_argument(
+    "--job_run_id",
+    action="store",
+    default=None,
+    type=str,
+    required=True,
+)
+
+args = parser.parse_args()
+root_path = args.root_path
+git_sha = args.git_sha
+job_run_id = args.job_run_id
 
 ALLPATHS = AllPaths()
 
