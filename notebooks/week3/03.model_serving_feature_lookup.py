@@ -64,7 +64,7 @@ workspace.serving_endpoints.create(
                 entity_name=f"{catalog_name}.{schema_name}.hotel_reservations_model_fe",
                 scale_to_zero_enabled=True,
                 workload_size="Small",
-                entity_version=2,
+                entity_version=6,
             )
         ]
     ),
@@ -76,7 +76,7 @@ workspace.serving_endpoints.create(
 # MAGIC %md
 # MAGIC ### 4. Call the Endpoint
 # MAGIC This section demonstrates how to call the model endpoint to make predictions, including the use of the feature lookup table.
-
+# MAGIC
 
 # COMMAND ----------
 
@@ -154,7 +154,7 @@ print("Execution time:", execution_time, "seconds")
 # MAGIC %md
 # MAGIC ### 5. Load the Feature Lookup Table
 # MAGIC We load the `hotel_features` table, which is used for feature lookup.
-
+# MAGIC
 
 # COMMAND ----------
 

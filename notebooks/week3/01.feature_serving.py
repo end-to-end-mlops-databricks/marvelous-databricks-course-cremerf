@@ -11,6 +11,7 @@ The source Delta table and the online table must use the same primary key.
 """
 
 # COMMAND ----------
+
 # Standard library imports
 import random
 import time
@@ -87,7 +88,7 @@ df = pd.concat([train_set, test_set])
 # COMMAND ----------
 
 # Load the MLflow model for predictions
-pipeline = mlflow.sklearn.load_model(f"models:/{catalog_name}.{schema_name}.hotel_reservations_model_basic/5")
+pipeline = mlflow.sklearn.load_model(f"models:/{catalog_name}.{schema_name}.hotel_reservations_model_basic/6")
 
 # COMMAND ----------
 
@@ -165,7 +166,7 @@ features = [
 ]
 
 # Create the feature spec for serving
-feature_spec_name = f"{catalog_name}.{schema_name}.return_predictions"
+feature_spec_name = f"{catalog_name}.{schema_name}.return_predictions_v2"
 
 fe.create_feature_spec(name=feature_spec_name, features=features, exclude_columns=None)
 
@@ -182,7 +183,7 @@ fe.create_feature_spec(name=feature_spec_name, features=features, exclude_column
 
 # Create a serving endpoint for the house booking predictions
 workspace.serving_endpoints.create(
-    name="hotel-reservations-cremerf-feature-serving",
+    name="hotel-reservations-cremerf-feature-serving-v2",
     config=EndpointCoreConfigInput(
         served_entities=[
             ServedEntityInput(
@@ -209,7 +210,7 @@ host = spark.conf.get("spark.databricks.workspaceUrl")
 id_list = preds_df["Booking_ID"]
 
 start_time = time.time()
-serving_endpoint = f"https://{host}/serving-endpoints/hotel-reservations-cremerf-feature-serving/invocations"
+serving_endpoint = f"https://{host}/serving-endpoints/hotel-reservations-cremerf-feature-serving-v2/invocations"
 response = requests.post(
     f"{serving_endpoint}",
     headers={"Authorization": f"Bearer {token}"},
@@ -241,7 +242,7 @@ response = requests.post(
 # COMMAND ----------
 
 # Initialize variables
-serving_endpoint = f"https://{host}/serving-endpoints/hotel-reservations-cremerf-feature-serving/invocations"
+serving_endpoint = f"https://{host}/serving-endpoints/hotel-reservations-cremerf-feature-serving-v2/invocations"
 id_list = preds_df.select("Booking_ID").rdd.flatMap(lambda x: x).collect()
 headers = {"Authorization": f"Bearer {token}"}
 num_requests = 10

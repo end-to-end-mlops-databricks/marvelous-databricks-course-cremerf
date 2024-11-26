@@ -45,12 +45,12 @@ workspace.serving_endpoints.create(
                 entity_name=f"{catalog_name}.{schema_name}.hotel_reservation_cremerf_pyfunc",
                 scale_to_zero_enabled=True,
                 workload_size="Small",
-                entity_version=21,
+                entity_version=22,
             )
         ],
         # Optional if only 1 entity is served
         traffic_config=TrafficConfig(
-            routes=[Route(served_model_name="hotel_reservation_cremerf_pyfunc-21", traffic_percentage=100)]
+            routes=[Route(served_model_name="hotel_reservation_cremerf_pyfunc-22", traffic_percentage=100)]
         ),
     ),
 )
@@ -61,6 +61,7 @@ workspace.serving_endpoints.create(
 # MAGIC ## Call the endpoint
 
 # COMMAND ----------
+
 dbutils = DBUtils(spark)
 token = dbutils.notebook.entry_point.getDbutils().notebook().getContext().apiToken().get()
 host = spark.conf.get("spark.databricks.workspaceUrl")

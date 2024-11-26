@@ -6,6 +6,7 @@ from databricks.feature_engineering import FeatureFunction, FeatureLookup
 from databricks.sdk import WorkspaceClient
 from lightgbm import LGBMClassifier
 from mlflow.models import infer_signature
+from mlflow.utils.environment import _mlflow_conda_env
 from pyspark.sql import SparkSession
 from sklearn.compose import ColumnTransformer
 from sklearn.metrics import accuracy_score, classification_report
@@ -190,6 +191,7 @@ pipeline = Pipeline(steps=[("preprocessor", preprocessor), ("classifier", LGBMCl
 mlflow.set_experiment(experiment_name="/Shared/hotel-reservations-cremerf")
 git_sha = "e0ec1a5902a2d8c60c434766c0013d47c3879237"
 
+
 with mlflow.start_run(tags={"branch": "week2", "git_sha": f"{git_sha}"}) as run:
     run_id = run.info.run_id
     pipeline.fit(X_train, y_train)
@@ -223,6 +225,7 @@ with mlflow.start_run(tags={"branch": "week2", "git_sha": f"{git_sha}"}) as run:
         artifact_path="lightgbm-pipeline-model-fe",
         training_set=training_set,
         signature=signature,
+        code_paths=['/Workspace/Users/cremerfederico29@gmail.com/.bundle/marvelmlops/dev/files/dist/marvelmlops-0.0.1-py3-none-any.whl'],
     )
 mlflow.register_model(
     model_uri=f"runs:/{run_id}/lightgbm-pipeline-model-fe",
