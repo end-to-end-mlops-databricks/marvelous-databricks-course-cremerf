@@ -15,6 +15,7 @@ from pyspark.sql.functions import current_timestamp, to_utc_timestamp
 from pyspark.sql.functions import col
 from pyspark.ml.evaluation import RegressionEvaluator
 from pyspark.sql.types import DoubleType
+from pyspark.ml.evaluation import MulticlassClassificationEvaluator
 from datetime import datetime
 import mlflow
 import argparse
@@ -175,9 +176,61 @@ predictions_new = fe.score_batch(model_uri=new_model_uri, df=X_test_spark)
 
 predictions_new = predictions_new.withColumnRenamed("prediction", "prediction_new")
 predictions_old = predictions_previous.withColumnRenamed("prediction", "prediction_old")
-test_set = test_set.select("Booking_ID", "loyalty_score")
+# Ensure you have the target variable in test_set
+test_set_labels = test_set.select("Booking_ID", target)
 
-# Join the DataFrames on the 'id' column
-df = test_set \
-    .join(predictions_new, on="Booking_ID") \
-    .join(predictions_old, on="Booking_ID")
+# Join the DataFrames on 'Booking_ID'
+df = test_set_labels \
+    .join(predictions_new.select("Booking_ID", "prediction_new"), on="Booking_ID") \
+    .join(predictions_old.select("Booking_ID", "prediction_old"), on="Booking_ID")
+
+# COMMAND ----------
+
+# Now 'df' contains: Booking_ID, target (true label), prediction_new, prediction_old
+
+# Ensure the predictions and labels are of the same data type
+df = df.withColumn(target, F.col(target).cast("double"))
+df = df.withColumn("prediction_new", F.col("prediction_new").cast("double"))
+df = df.withColumn("prediction_old", F.col("prediction_old").cast("double"))
+
+# Create evaluators for F1 Score and Accuracy
+evaluator_f1 = MulticlassClassificationEvaluator(labelCol=target, metricName="f1")
+evaluator_acc = MulticlassClassificationEvaluator(labelCol=target, metricName="accuracy")
+
+# Evaluate the new model
+evaluator_f1.setPredictionCol("prediction_new")
+evaluator_acc.setPredictionCol("prediction_new")
+f1_new = evaluator_f1.evaluate(df)
+accuracy_new = evaluator_acc.evaluate(df)
+
+# Evaluate the old model
+evaluator_f1.setPredictionCol("prediction_old")
+evaluator_acc.setPredictionCol("prediction_old")
+f1_old = evaluator_f1.evaluate(df)
+accuracy_old = evaluator_acc.evaluate(df)
+
+# Compare models based on F1 Score and Accuracy
+print(f"F1 Score for New Model: {f1_new}")
+print(f"F1 Score for Old Model: {f1_old}")
+print(f"Accuracy for New Model: {accuracy_new}")
+print(f"Accuracy for Old Model: {accuracy_old}")
+
+# Decide which model is better based on F1 Score
+if f1_new > f1_old:
+    print("New model is better based on F1 Score.")
+    # Register the new model
+    model_version = mlflow.register_model(
+        model_uri=new_model_uri,
+        name=f"{catalog_name}.{schema_name}.hotel_reservations_model_fe",
+        tags={
+            "git_sha": f"{git_sha}",
+            "job_run_id": job_run_id
+        }
+    )
+
+    print("New model registered with version:", model_version.version)
+    dbutils.jobs.taskValues.set(key="model_version", value=model_version.version)
+    dbutils.jobs.taskValues.set(key="model_update", value=1)
+else:
+    print("Old model is better based on F1 Score.")
+    dbutils.jobs.taskValues.set(key="model_update", value=0)
