@@ -190,6 +190,9 @@ with mlflow.start_run(tags={"branch": "week5", "git_sha": f"{git_sha}", "job_run
         artifact_path="lightgbm-pipeline-model-fe",
         training_set=training_set,
         signature=signature,
+        code_paths=[
+        "/Workspace/Users/cremerfederico29@gmail.com/.bundle/marvelmlops/dev/artifacts/.internal/marvelmlops-0.0.1-py3-none-any.whl"
+        ]
     )
 
 model_uri = f"runs:/{run_id}/lightgbm-pipeline-model-fe"

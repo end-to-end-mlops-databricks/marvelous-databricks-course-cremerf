@@ -7,7 +7,7 @@ from pyspark.ml.evaluation import MulticlassClassificationEvaluator
 from pyspark.sql import SparkSession
 from pyspark.sql import functions as F
 from pyspark.sql.functions import current_timestamp, to_utc_timestamp
-from pyspark.sql.types import DoubleType
+from pyspark.sql.types import DoubleType, FloatType
 
 from hotel_reservation.config import ProjectConfig
 from hotel_reservation.paths import AllPaths
@@ -105,6 +105,9 @@ test_set = test_set.withColumn(
     calculate_loyalty_score_udf(F.col("no_of_previous_bookings_not_canceled"), F.col("no_of_previous_cancellations")),
 )
 
+test_set = test_set.withColumn("lead_time", F.col("lead_time").cast("integer"))
+test_set = test_set.withColumn("no_of_special_requests", F.col("no_of_special_requests").cast("integer"))
+test_set = test_set.withColumn('avg_price_per_room', F.col('avg_price_per_room').cast(FloatType()))
 test_set = test_set.withColumn("update_timestamp_utc", to_utc_timestamp(current_timestamp(), "UTC"))
 
 X_test_spark = test_set.select(num_features + cat_features + ["loyalty_score", "Booking_ID", "update_timestamp_utc"])
