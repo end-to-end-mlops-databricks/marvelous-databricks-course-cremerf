@@ -3,17 +3,131 @@
 # See https://docs.databricks.com/dev-tools/bundles/index.html for documentation.
 
 bundle:
-  name: marvelmlops
+  name: marvelmlops-end2end-dbricks-cremerf
+  cluster_id: 1019-004523-z9n7g64f
+
+artifacts:
+  default:
+    type: whl
+    build: python -m build
+    path: .
+
+variables:
+  root_path:
+    description: root_path for the target
+    default: /Shared/.bundle/${bundle.target}/${bundle.name}
+  git_sha:
+    description: git_sha
+    default: abcd
+  schedule_pause_status:
+    description: schedule pause status
+    default: UNPAUSED
+
+
+resources:
+  jobs:
+    house-price:
+      name: cremerf-hotel-reservation-workflow-test-demo
+      schedule:
+        quartz_cron_expression: "0 0 13 * * ?"
+        timezone_id: "America/Argentina/Buenos_Aires"
+        pause_status: ${var.schedule_pause_status}
+      tags:
+        project_name: "cremerf-hotel-reservation"
+      job_clusters:
+        - job_cluster_key: "hotel-reservation-cluster"
+          new_cluster:
+            spark_version: "15.4.x-scala2.12"
+            data_security_mode: "SINGLE_USER"
+            node_type_id: "r3.xlarge"
+            driver_node_type_id: "r3.xlarge"
+            autoscale:
+              min_workers: 1
+              max_workers: 1
+
+      tasks:
+        - task_key: "preprocessing"
+          job_cluster_key: "hotel-reservation-cluster"
+          # existing_cluster_id: 1014-134439-1sgb0b2m
+          spark_python_task:
+            python_file: "week5/preprocess.py"
+            parameters:
+              - "--root_path"
+              - ${var.root_path}
+          libraries:
+           - whl: ./dist/*.whl
+        - task_key: if_refreshed
+          condition_task:
+            op: "EQUAL_TO"
+            left: "{{tasks.preprocessing.values.refreshed}}"
+            right: "1"
+          depends_on:
+            - task_key: "preprocessing"
+        - task_key: "train_model"
+          depends_on:
+            - task_key: "if_refreshed"
+              outcome: "true"
+          job_cluster_key: "hotel-reservation-cluster"
+          # existing_cluster_id: 1014-134439-1sgb0b2m
+          spark_python_task:
+            python_file: "week5/train_model.py"
+            parameters:
+              - "--root_path"
+              - ${var.root_path}
+              - "--git_sha"
+              - ${var.git_sha}
+              - "--job_run_id"
+              - "{{job.id}}"
+          libraries:
+            - whl: ./dist/*.whl
+        - task_key: "evaluate_model"
+          depends_on:
+            - task_key: "train_model"
+          job_cluster_key: "hotel-reservation-cluster"
+          # existing_cluster_id: 1014-134439-1sgb0b2m
+          spark_python_task:
+            python_file: "week5/evaluate_model.py"
+            parameters:
+              - "--root_path"
+              - ${var.root_path}
+              - "--new_model_uri"
+              - "{{tasks.train_model.values.new_model_uri}}"
+              - "--job_run_id"
+              - "{{job.id}}"
+              - "--git_sha"
+              - ${var.git_sha}
+          libraries:
+            - whl: ./dist/*.whl
+        - task_key: model_update
+          condition_task:
+            op: "EQUAL_TO"
+            left: "{{tasks.evaluate_model.values.model_update}}"
+            right: "1"
+          depends_on:
+            - task_key: "evaluate_model"
+        - task_key: "deploy_model"
+          depends_on:
+            - task_key: "model_update"
+              outcome: "true"
+          job_cluster_key: "hotel-reservation-cluster"
+          # existing_cluster_id: 1014-134439-1sgb0b2m
+          spark_python_task:
+            python_file: "week5/deploy_model.py"
+            parameters:
+              - "--root_path"
+              - ${var.root_path}
+          libraries:
+            - whl: ./dist/*.whl
 
 targets:
-  dev:
-    mode: development
+  prod:
     default: true
     workspace:
       host: https://dbc-643c4c2b-d6c9.cloud.databricks.com
+      root_path: ${var.root_path}
 
-  ## Optionally, there could be 'staging' or 'prod' targets here.
-  #
-  # prod:
-  #   workspace:
-  #     host: https://dbc-643c4c2b-d6c9.cloud.databricks.com
+  dev:
+    mode: development
+    workspace:
+      host: https://dbc-643c4c2b-d6c9.cloud.databricks.com
+      root_path: /Workspace/Users/cremerfederico29@gmail.com/.bundle/${bundle.target}/${bundle.name}

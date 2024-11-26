@@ -1,15 +1,13 @@
+import argparse
+
+import mlflow
 from databricks.feature_engineering import FeatureEngineeringClient
 from databricks.sdk import WorkspaceClient
+from pyspark.ml.evaluation import MulticlassClassificationEvaluator
 from pyspark.sql import SparkSession
 from pyspark.sql import functions as F
 from pyspark.sql.functions import current_timestamp, to_utc_timestamp
 from pyspark.sql.types import DoubleType
-from pyspark.ml.evaluation import MulticlassClassificationEvaluator
-from datetime import datetime
-import mlflow
-import argparse
-from pyspark.sql import functions as F
-from pyspark.sql import DataFrame
 
 from hotel_reservation.config import ProjectConfig
 from hotel_reservation.paths import AllPaths
@@ -56,7 +54,7 @@ job_run_id = args.job_run_id
 git_sha = args.git_sha
 
 
-config_path = (f"{root_path}/project_config.yml")
+config_path = f"{root_path}/project_config.yml"
 config = ProjectConfig.from_yaml(config_path=config_path)
 
 spark = SparkSession.builder.getOrCreate()
@@ -82,38 +80,32 @@ previous_model_uri = f"models:/{model_name}/{model_version}"
 
 test_set = spark.table(f"{catalog_name}.{schema_name}.test_set")
 
+
 # Define the UDF using your provided function
 def calculate_loyalty_score(no_of_previous_bookings_not_canceled, no_of_previous_cancellations):
     # Define weightings
-    w1 = 1.5     # Weight the number of times a previous booking was NOT cancelled
-    w2 = 1.0     # Weight the number of times a previous booking was cancelled
+    w1 = 1.5  # Weight the number of times a previous booking was NOT cancelled
+    w2 = 1.0  # Weight the number of times a previous booking was cancelled
 
     # Calculate loyalty score
     loyalty_score = (w1 * no_of_previous_bookings_not_canceled) - (w2 * no_of_previous_cancellations)
     return loyalty_score
+
 
 # Register the UDF
 calculate_loyalty_score_udf = F.udf(calculate_loyalty_score, DoubleType())
 
 
 test_set = test_set.withColumn(
-    'no_of_previous_bookings_not_canceled',
-    F.col('no_of_previous_bookings_not_canceled').cast('double')
-).withColumn(
-    'no_of_previous_cancellations',
-    F.col('no_of_previous_cancellations').cast('double')
-)
+    "no_of_previous_bookings_not_canceled", F.col("no_of_previous_bookings_not_canceled").cast("double")
+).withColumn("no_of_previous_cancellations", F.col("no_of_previous_cancellations").cast("double"))
 
 test_set = test_set.withColumn(
-    'loyalty_score',
-    calculate_loyalty_score_udf(
-        F.col('no_of_previous_bookings_not_canceled'),
-        F.col('no_of_previous_cancellations')
-    )
+    "loyalty_score",
+    calculate_loyalty_score_udf(F.col("no_of_previous_bookings_not_canceled"), F.col("no_of_previous_cancellations")),
 )
 
-test_set = test_set.withColumn(
-    "update_timestamp_utc", to_utc_timestamp(current_timestamp(), "UTC"))
+test_set = test_set.withColumn("update_timestamp_utc", to_utc_timestamp(current_timestamp(), "UTC"))
 
 X_test_spark = test_set.select(num_features + cat_features + ["loyalty_score", "Booking_ID", "update_timestamp_utc"])
 y_test_spark = test_set.select("Booking_ID", target)
@@ -139,9 +131,9 @@ predictions_old = predictions_previous.withColumnRenamed("prediction", "predicti
 test_set_labels = test_set.select("Booking_ID", target)
 
 # Join the DataFrames on 'Booking_ID'
-df = test_set_labels \
-    .join(predictions_new.select("Booking_ID", "prediction_new"), on="Booking_ID") \
-    .join(predictions_old.select("Booking_ID", "prediction_old"), on="Booking_ID")
+df = test_set_labels.join(predictions_new.select("Booking_ID", "prediction_new"), on="Booking_ID").join(
+    predictions_old.select("Booking_ID", "prediction_old"), on="Booking_ID"
+)
 
 # Now 'df' contains: Booking_ID, target (true label), prediction_new, prediction_old
 
@@ -179,10 +171,7 @@ if f1_new > f1_old:
     model_version = mlflow.register_model(
         model_uri=new_model_uri,
         name=f"{catalog_name}.{schema_name}.hotel_reservations_model_fe",
-        tags={
-            "git_sha": f"{git_sha}",
-            "job_run_id": job_run_id
-        }
+        tags={"git_sha": f"{git_sha}", "job_run_id": job_run_id},
     )
 
     print("New model registered with version:", model_version.version)
@@ -191,17 +180,3 @@ if f1_new > f1_old:
 else:
     print("Old model is better based on F1 Score.")
     dbutils.jobs.taskValues.set(key="model_update", value=0)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
