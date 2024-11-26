@@ -13,7 +13,7 @@ class ProjectConfig(BaseModel):
     schema_name: str
     parameters: Dict[str, Any]  # Dictionary to hold model-related parameters
     ab_test: Dict[str, Any]
-    pipeline_id: str # pipeline id for data live tables
+    pipeline_id: str  # pipeline id for data live tables
 
     @classmethod
     def from_yaml(cls, config_path: str):

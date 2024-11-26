@@ -18,13 +18,13 @@ Workflow:
 6. Set a task value indicating whether new data was processed.
 """
 
-import yaml
 import argparse
-from pyspark.sql import SparkSession
-from pyspark.sql.functions import col, max as spark_max
-from databricks.sdk import WorkspaceClient
 import time
 
+from databricks.sdk import WorkspaceClient
+from pyspark.sql import SparkSession
+from pyspark.sql.functions import col
+from pyspark.sql.functions import max as spark_max
 
 from hotel_reservation.config import ProjectConfig
 from hotel_reservation.paths import AllPaths
@@ -47,7 +47,7 @@ parser.add_argument(
 
 args = parser.parse_args()
 root_path = args.root_path
-config_path = (f"{root_path}/project_config.yml")
+config_path = f"{root_path}/project_config.yml"
 config = ProjectConfig.from_yaml(config_path=config_path)
 pipeline_id = config.pipeline_id
 
@@ -61,13 +61,17 @@ schema_name = config.schema_name
 source_data = spark.table(f"{catalog_name}.{schema_name}.source_data")
 
 # Get max update timestamps from existing data
-max_train_timestamp = spark.table(f"{catalog_name}.{schema_name}.train_set") \
-    .select(spark_max("update_timestamp_utc").alias("max_update_timestamp")) \
+max_train_timestamp = (
+    spark.table(f"{catalog_name}.{schema_name}.train_set")
+    .select(spark_max("update_timestamp_utc").alias("max_update_timestamp"))
     .collect()[0]["max_update_timestamp"]
+)
 
-max_test_timestamp = spark.table(f"{catalog_name}.{schema_name}.test_set") \
-    .select(spark_max("update_timestamp_utc").alias("max_update_timestamp")) \
+max_test_timestamp = (
+    spark.table(f"{catalog_name}.{schema_name}.test_set")
+    .select(spark_max("update_timestamp_utc").alias("max_update_timestamp"))
     .collect()[0]["max_update_timestamp"]
+)
 
 latest_timestamp = max(max_train_timestamp, max_test_timestamp)
 
@@ -86,8 +90,8 @@ affected_rows_train = new_data_train.count()
 affected_rows_test = new_data_test.count()
 
 
-#write into feature table; update online table
-if affected_rows_train > 0 or affected_rows_test > 0 :
+# write into feature table; update online table
+if affected_rows_train > 0 or affected_rows_test > 0:
     spark.sql(f"""
         WITH max_timestamp AS (
             SELECT MAX(update_timestamp_utc) AS max_update_timestamp
@@ -109,17 +113,15 @@ if affected_rows_train > 0 or affected_rows_test > 0 :
         WHERE update_timestamp_utc == (SELECT max_update_timestamp FROM max_timestamp)
 """)
     refreshed = 1
-    update_response = workspace.pipelines.start_update(
-        pipeline_id=pipeline_id, full_refresh=False)
+    update_response = workspace.pipelines.start_update(pipeline_id=pipeline_id, full_refresh=False)
     while True:
-        update_info = workspace.pipelines.get_update(pipeline_id=pipeline_id, 
-                                update_id=update_response.update_id)
+        update_info = workspace.pipelines.get_update(pipeline_id=pipeline_id, update_id=update_response.update_id)
         state = update_info.update.state.value
-        if state == 'COMPLETED':
+        if state == "COMPLETED":
             break
-        elif state in ['FAILED', 'CANCELED']:
+        elif state in ["FAILED", "CANCELED"]:
             raise SystemError("Online table failed to update.")
-        elif state == 'WAITING_FOR_RESOURCES':
+        elif state == "WAITING_FOR_RESOURCES":
             print("Pipeline is waiting for resources.")
         else:
             print(f"Pipeline is in {state} state.")
@@ -128,5 +130,3 @@ else:
     refreshed = 0
 
 dbutils.jobs.taskValues.set(key="refreshed", value=refreshed)
-
-

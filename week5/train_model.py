@@ -12,26 +12,25 @@ Key functionality:
 The model uses both numerical and categorical features, including a custom calculated house age feature.
 """
 
-from databricks import feature_engineering
-from pyspark.sql import SparkSession
-from databricks.sdk import WorkspaceClient
-import mlflow
 import argparse
-from pyspark.sql import functions as F
-from pyspark.sql.types import DoubleType
-from pyspark.sql.functions import udf
+
+import mlflow
+from databricks import feature_engineering
+from databricks.feature_engineering import FeatureFunction, FeatureLookup
+from databricks.sdk import WorkspaceClient
 from lightgbm import LGBMClassifier
-from hotel_reservation.classifier import CancellationModel
 from mlflow.models import infer_signature
+from pyspark.sql import SparkSession
+from pyspark.sql import functions as F
+from pyspark.sql.functions import udf
+from pyspark.sql.types import DoubleType
 from sklearn.compose import ColumnTransformer
 from sklearn.metrics import accuracy_score, classification_report
-from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import OneHotEncoder
-from datetime import datetime
-from databricks.feature_engineering import FeatureFunction, FeatureLookup
+
+from hotel_reservation.classifier import CancellationModel
 from hotel_reservation.config import ProjectConfig
 from hotel_reservation.paths import AllPaths
-
 
 parser = argparse.ArgumentParser()
 parser.add_argument(
@@ -82,12 +81,13 @@ schema_name = config.schema_name
 # Define the UDF using your provided function
 def calculate_loyalty_score(no_of_previous_bookings_not_canceled, no_of_previous_cancellations):
     # Define weightings
-    w1 = 1.5     # Weight the number of times a previous booking was NOT cancelled
-    w2 = 1.0     # Weight the number of times a previous booking was cancelled
+    w1 = 1.5  # Weight the number of times a previous booking was NOT cancelled
+    w2 = 1.0  # Weight the number of times a previous booking was cancelled
 
     # Calculate loyalty score
     loyalty_score = (w1 * no_of_previous_bookings_not_canceled) - (w2 * no_of_previous_cancellations)
     return loyalty_score
+
 
 # Register the UDF
 calculate_loyalty_score_udf = udf(calculate_loyalty_score, DoubleType())
@@ -96,25 +96,19 @@ calculate_loyalty_score_udf = udf(calculate_loyalty_score, DoubleType())
 feature_table_name = f"{catalog_name}.{schema_name}.hotel_features"
 loyalty_function_name = f"{catalog_name}.{schema_name}.calculate_loyalty_score"
 
-train_set = spark.table(f"{catalog_name}.{schema_name}.train_set").drop("lead_time", "no_of_special_requests", "avg_price_per_room")
+train_set = spark.table(f"{catalog_name}.{schema_name}.train_set").drop(
+    "lead_time", "no_of_special_requests", "avg_price_per_room"
+)
 test_set = spark.table(f"{catalog_name}.{schema_name}.test_set")
 
 # Cast necessary columns in the training set
 train_set = train_set.withColumn(
-    'no_of_previous_bookings_not_canceled',
-    F.col('no_of_previous_bookings_not_canceled').cast('double')
-).withColumn(
-    'no_of_previous_cancellations',
-    F.col('no_of_previous_cancellations').cast('double')
-)
+    "no_of_previous_bookings_not_canceled", F.col("no_of_previous_bookings_not_canceled").cast("double")
+).withColumn("no_of_previous_cancellations", F.col("no_of_previous_cancellations").cast("double"))
 
 test_set = test_set.withColumn(
-    'no_of_previous_bookings_not_canceled',
-    F.col('no_of_previous_bookings_not_canceled').cast('double')
-).withColumn(
-    'no_of_previous_cancellations',
-    F.col('no_of_previous_cancellations').cast('double')
-)
+    "no_of_previous_bookings_not_canceled", F.col("no_of_previous_bookings_not_canceled").cast("double")
+).withColumn("no_of_previous_cancellations", F.col("no_of_previous_cancellations").cast("double"))
 
 # Feature engineering setup
 training_set = fe.create_training_set(
@@ -129,19 +123,18 @@ training_set = fe.create_training_set(
         FeatureFunction(
             udf_name=loyalty_function_name,
             output_name="loyalty_score",
-            input_bindings={"no_of_previous_bookings_not_canceled": "no_of_previous_bookings_not_canceled",
-                            "no_of_previous_cancellations": "no_of_previous_cancellations"},
+            input_bindings={
+                "no_of_previous_bookings_not_canceled": "no_of_previous_bookings_not_canceled",
+                "no_of_previous_cancellations": "no_of_previous_cancellations",
+            },
         ),
     ],
-    exclude_columns=["update_timestamp_utc"]
+    exclude_columns=["update_timestamp_utc"],
 )
 
 test_set = test_set.withColumn(
-    'loyalty_score',
-    calculate_loyalty_score_udf(
-        F.col('no_of_previous_bookings_not_canceled'),
-        F.col('no_of_previous_cancellations')
-    )
+    "loyalty_score",
+    calculate_loyalty_score_udf(F.col("no_of_previous_bookings_not_canceled"), F.col("no_of_previous_cancellations")),
 )
 
 train_df = training_set.load_df().toPandas()
@@ -162,9 +155,7 @@ model_pipeline = CancellationModel(config=config, preprocessor=preprocessor, cla
 
 mlflow.set_experiment(experiment_name="/Shared/hotel-reservations-fe-cremerf")
 
-with mlflow.start_run(tags={"branch": "week5",
-                            "git_sha": f"{git_sha}",
-                            "job_run_id": job_run_id}) as run:
+with mlflow.start_run(tags={"branch": "week5", "git_sha": f"{git_sha}", "job_run_id": job_run_id}) as run:
     run_id = run.info.run_id
 
     model_pipeline.pipeline.fit(X_train, y_train)
@@ -200,18 +191,5 @@ with mlflow.start_run(tags={"branch": "week5",
         signature=signature,
     )
 
-model_uri=f'runs:/{run_id}/lightgbm-pipeline-model-fe'
+model_uri = f"runs:/{run_id}/lightgbm-pipeline-model-fe"
 dbutils.jobs.taskValues.set(key="new_model_uri", value=model_uri)
-
-
-
-
-
-
-
-
-
-
-
-
-

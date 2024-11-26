@@ -3,7 +3,7 @@ Hello students,
 
 Before diving into the Week 5 materials and code, let's clarify the key concepts and implementations covered in this lecture.
 
-This file provides an overview of the scripts used in our house price prediction pipeline. These scripts manage data ingestion, model training, evaluation, and deployment in Databricks. 
+This file provides an overview of the scripts used in our house price prediction pipeline. These scripts manage data ingestion, model training, evaluation, and deployment in Databricks.
 In this example, we’re simulating a real-world scenario where a machine learning model is served based on a dataset that receives new rows each week. To maintain high performance, we need to regularly evaluate the model’s effectiveness on the latest data and decide if an update is necessary.
 
 
