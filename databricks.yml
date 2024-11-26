@@ -3,9 +3,10 @@
 # See https://docs.databricks.com/dev-tools/bundles/index.html for documentation.
 
 bundle:
-  name: marvelmlops-end2end-dbricks-cremerf
+  name: marvelmlops
   cluster_id: 1019-004523-z9n7g64f
-
+#/Workspace/Users/cremerfederico29@gmail.com/.bundle/marvelmlops/dev/files
+#/Workspace/Users/cremerfederico29@gmail.com/.bundle/${bundle.target}/${bundle.name}
 artifacts:
   default:
     type: whl
@@ -15,7 +16,7 @@ artifacts:
 variables:
   root_path:
     description: root_path for the target
-    default: /Shared/.bundle/${bundle.target}/${bundle.name}
+    default: /Workspace/Users/cremerfederico29@gmail.com/.bundle/${bundle.name}/${bundle.target}
   git_sha:
     description: git_sha
     default: abcd
@@ -120,14 +121,9 @@ resources:
             - whl: ./dist/*.whl
 
 targets:
-  prod:
-    default: true
-    workspace:
-      host: https://dbc-643c4c2b-d6c9.cloud.databricks.com
-      root_path: ${var.root_path}
 
   dev:
     mode: development
     workspace:
       host: https://dbc-643c4c2b-d6c9.cloud.databricks.com
-      root_path: /Workspace/Users/cremerfederico29@gmail.com/.bundle/${bundle.target}/${bundle.name}
+      root_path: /Workspace/Users/cremerfederico29@gmail.com/.bundle/${bundle.name}/${bundle.target}

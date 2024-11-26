@@ -30,7 +30,7 @@ parser.add_argument(
 args = parser.parse_args()
 root_path = args.root_path
 
-config_path = f"{root_path}/project_config.yml"
+config_path = f"{root_path}/project-config.yml"
 config = ProjectConfig.from_yaml(config_path=config_path)
 
 model_version = dbutils.jobs.taskValues.get(taskKey="evaluate_model", key="model_version")
